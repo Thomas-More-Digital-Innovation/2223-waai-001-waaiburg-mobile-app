@@ -1,115 +1,358 @@
 import 'package:flutter/material.dart';
+import 'package:font_awesome_flutter/font_awesome_flutter.dart';
+import 'package:go_router/go_router.dart';
+import 'package:google_fonts/google_fonts.dart';
 
-void main() {
-  runApp(const MyApp());
-}
+void main() => runApp(const MyApp());
 
+/// The route configuration.
+final GoRouter _router = GoRouter(
+  routes: <RouteBase>[
+    GoRoute(
+      path: '/',
+      builder: (BuildContext context, GoRouterState state) {
+        return const HomeScreen();
+      },
+      routes: <RouteBase>[
+        GoRoute(
+          path: 'jongeren',
+          builder: (BuildContext context, GoRouterState state) {
+            return const JongerenScreen();
+          },
+        ),
+        GoRoute(
+          path: 'volwassenen',
+          builder: (BuildContext context, GoRouterState state) {
+            return const VolwassenenScreen();
+          },
+        ),
+        GoRoute(
+          path: 'nieuwtjes',
+          builder: (BuildContext context, GoRouterState state) {
+            return const NieuwtjesScreen();
+          },
+        ),
+        GoRoute(
+          path: 'website',
+          builder: (BuildContext context, GoRouterState state) {
+            return const WebsiteScreen();
+          },
+        ),
+      ],
+    ),
+  ],
+);
+
+/// The main app.
 class MyApp extends StatelessWidget {
-  const MyApp({super.key});
+  /// Constructs a [MyApp]
+  const MyApp({Key? key}) : super(key: key);
 
-  // This widget is the root of your application.
   @override
   Widget build(BuildContext context) {
-    return MaterialApp(
-      title: 'Flutter Demo',
-      theme: ThemeData(
-        // This is the theme of your application.
-        //
-        // Try running your application with "flutter run". You'll see the
-        // application has a blue toolbar. Then, without quitting the app, try
-        // changing the primarySwatch below to Colors.green and then invoke
-        // "hot reload" (press "r" in the console where you ran "flutter run",
-        // or simply save your changes to "hot reload" in a Flutter IDE).
-        // Notice that the counter didn't reset back to zero; the application
-        // is not restarted.
-        primarySwatch: Colors.blue,
-      ),
-      home: const MyHomePage(title: 'Flutter Demo Home Page'),
+    return MaterialApp.router(
+      routerConfig: _router,
     );
   }
 }
 
-class MyHomePage extends StatefulWidget {
-  const MyHomePage({super.key, required this.title});
-
-  // This widget is the home page of your application. It is stateful, meaning
-  // that it has a State object (defined below) that contains fields that affect
-  // how it looks.
-
-  // This class is the configuration for the state. It holds the values (in this
-  // case the title) provided by the parent (in this case the App widget) and
-  // used by the build method of the State. Fields in a Widget subclass are
-  // always marked "final".
-
-  final String title;
-
+class BackgroundPainter4 extends CustomPainter {
   @override
-  State<MyHomePage> createState() => _MyHomePageState();
-}
+  void paint(Canvas canvas, Size size) {
+    final height = size.height;
+    final width = size.width;
+    Paint paint = Paint();
 
-class _MyHomePageState extends State<MyHomePage> {
-  int _counter = 0;
+    Path mainBackground = Path();
+    mainBackground.addRect(Rect.fromLTRB(0, 0, width, height));
+    paint.shader = const LinearGradient(
+      begin: Alignment.topRight,
+      end: Alignment.bottomLeft,
+      colors: <Color>[
+        Color(0xFFF25B58),
+        Color(0xFFF38E3B),
+      ],
+    ).createShader(Rect.fromPoints(const Offset(0, 0), Offset(width, height)));
 
-  void _incrementCounter() {
-    setState(() {
-      // This call to setState tells the Flutter framework that something has
-      // changed in this State, which causes it to rerun the build method below
-      // so that the display can reflect the updated values. If we changed
-      // _counter without calling setState(), then the build method would not be
-      // called again, and so nothing would appear to happen.
-      _counter++;
-    });
+    canvas.drawPath(mainBackground, paint);
+
+    Path topRightTriangle = Path();
+    topRightTriangle.addPolygon(
+        [
+          Offset(width * 0.75, 0),
+          Offset(width, 0),
+          Offset(width, height * 0.12),
+        ], //Lijst van punten
+        true //Close is true, het begin punt en eind punt wordt verbonden
+        );
+    paint.color = Colors.white;
+    paint.shader = null;
+    canvas.drawPath(topRightTriangle, paint);
+
+    Path bottomLeftTriangle = Path();
+    bottomLeftTriangle.addPolygon(
+        [
+          Offset(0, height * 0.75),
+          Offset(width * 0.45, height),
+          Offset(0, height),
+        ], //Lijst van punten
+        true //Close is true, het begin punt en eind punt wordt verbonden
+        );
+    paint.color = Colors.white;
+    canvas.drawPath(bottomLeftTriangle, paint);
   }
 
   @override
+  bool shouldRepaint(covariant CustomPainter oldDelegate) {
+    return oldDelegate != this;
+  }
+}
+
+/// The home screen
+class HomeScreen extends StatelessWidget {
+  /// Constructs a [HomeScreen]
+  const HomeScreen({Key? key}) : super(key: key);
+
+  @override
   Widget build(BuildContext context) {
-    // This method is rerun every time setState is called, for instance as done
-    // by the _incrementCounter method above.
-    //
-    // The Flutter framework has been optimized to make rerunning build methods
-    // fast, so that you can just rebuild anything that needs updating rather
-    // than having to individually change instances of widgets.
-    return Scaffold(
-      appBar: AppBar(
-        // Here we take the value from the MyHomePage object that was created by
-        // the App.build method, and use it to set our appbar title.
-        title: Text(widget.title),
-      ),
-      body: Center(
-        // Center is a layout widget. It takes a single child and positions it
-        // in the middle of the parent.
-        child: Column(
-          // Column is also a layout widget. It takes a list of children and
-          // arranges them vertically. By default, it sizes itself to fit its
-          // children horizontally, and tries to be as tall as its parent.
-          //
-          // Invoke "debug painting" (press "p" in the console, choose the
-          // "Toggle Debug Paint" action from the Flutter Inspector in Android
-          // Studio, or the "Toggle Debug Paint" command in Visual Studio Code)
-          // to see the wireframe for each widget.
-          //
-          // Column has various properties to control how it sizes itself and
-          // how it positions its children. Here we use mainAxisAlignment to
-          // center the children vertically; the main axis here is the vertical
-          // axis because Columns are vertical (the cross axis would be
-          // horizontal).
-          mainAxisAlignment: MainAxisAlignment.center,
-          children: <Widget>[
-            const Text(
-              'You have pushed the button this many times:',
+    final double screenHeight = MediaQuery.of(context).size.height;
+
+    return Material(
+      child: Container(
+        decoration: BoxDecoration(
+          gradient: LinearGradient(colors: [
+            Theme.of(context).primaryColorDark,
+            Theme.of(context).primaryColorLight,
+          ], begin: Alignment.topLeft),
+        ),
+        child: CustomPaint(
+          painter: BackgroundPainter4(),
+          child: Padding(
+            padding: const EdgeInsets.all(20.0),
+            child: Column(
+              mainAxisAlignment: MainAxisAlignment.spaceEvenly,
+              crossAxisAlignment: CrossAxisAlignment.center,
+              children: [
+                // Titel
+                Column(
+                  children: [
+                    Center(
+                      child: FittedBox(
+                        fit: BoxFit.fitHeight,
+                        child: Container(
+                          margin: EdgeInsets.only(
+                              top: screenHeight * 0.05,
+                              bottom: screenHeight * 0.05),
+                          child: Column(
+                            crossAxisAlignment: CrossAxisAlignment.end,
+                            children: [
+                              Text(
+                                "De Waaiburg",
+                                style: GoogleFonts.poppins(
+                                    color: const Color(0xFFF3D015),
+                                    shadows: [
+                                      Shadow(
+                                          color: Theme.of(context).shadowColor,
+                                          offset: const Offset(0, 3),
+                                          blurRadius: 15)
+                                    ],
+                                    fontWeight: FontWeight.w900,
+                                    fontSize: 48),
+                              ),
+                              Align(
+                                alignment: Alignment.topRight,
+                                child: Text(
+                                  "VZW",
+                                  style: GoogleFonts.poppins(
+                                      color: const Color(0xFFF3D015),
+                                      shadows: [
+                                        Shadow(
+                                            color:
+                                                Theme.of(context).shadowColor,
+                                            offset: const Offset(0, 3),
+                                            blurRadius: 15)
+                                      ],
+                                      fontWeight: FontWeight.bold,
+                                      fontSize: 25),
+                                ),
+                              ),
+                            ],
+                          ),
+                        ),
+                      ),
+                    ),
+                  ],
+                ),
+                // Menu
+                Expanded(
+                  child: SizedBox(
+                    height: MediaQuery.of(context).size.height,
+                    width: MediaQuery.of(context).size.width,
+                    child: GridView.count(
+                      padding: const EdgeInsets.only(top: 00.0, bottom: 10.0),
+                      crossAxisCount: 2,
+                      mainAxisSpacing: 20,
+                      crossAxisSpacing: 20,
+                      childAspectRatio: 1,
+                      primary: false,
+                      shrinkWrap: false,
+                      children: [
+                        buildMenuButton(context = context,
+                            name: "JONGEREN",
+                            iconData: FontAwesomeIcons.child,
+                            iconColor: Theme.of(context).colorScheme.secondary),
+                        buildMenuButton(context = context,
+                            name: "VOLWASSENEN",
+                            iconData: FontAwesomeIcons.userTie,
+                            iconColor: const Color(0xBBFFFFFF)),
+                        buildMenuButton(context = context,
+                            name: "NIEUWTJES",
+                            iconData: FontAwesomeIcons.newspaper,
+                            iconColor: const Color(0xBBFFFFFF)),
+                        buildMenuButton(context = context,
+                            name: "WEBSITE",
+                            iconData: FontAwesomeIcons.globe,
+                            iconColor: Theme.of(context).colorScheme.secondary),
+                      ],
+                    ),
+                  ),
+                ),
+              ],
             ),
-            Text(
-              '$_counter',
-              style: Theme.of(context).textTheme.headline4,
+          ),
+        ),
+      ),
+    );
+  }
+
+  Widget buildMenuButton(
+    BuildContext context, {
+    String name = "Button",
+    IconData iconData = Icons.device_unknown,
+    Color iconColor = Colors.white,
+  }) {
+    return GestureDetector(
+      onTap: () => context.go('/$name'),
+      child: Container(
+        margin: const EdgeInsets.all(0.0),
+        padding: const EdgeInsets.all(18.0),
+        decoration: BoxDecoration(
+            color: Colors.white.withAlpha(64),
+            borderRadius: const BorderRadius.all(Radius.circular(30))),
+        child: FittedBox(
+          fit: BoxFit.scaleDown,
+          child: Column(
+            children: [
+              FaIcon(
+                iconData,
+                color: iconColor,
+                size: 82,
+              ),
+              const SizedBox(height: 15), // padding tussen icon en tekst
+              Text(
+                name,
+                style: GoogleFonts.poppins(
+                    fontSize: 18,
+                    fontWeight: FontWeight.w600,
+                    color: Colors.white,
+                    shadows: [
+                      const Shadow(
+                        blurRadius: 5,
+                        color: Colors.black45,
+                        offset: Offset(0, 2),
+                      )
+                    ]),
+              ),
+            ],
+          ),
+        ),
+      ),
+    );
+  }
+}
+
+/// The jongeren screen
+class JongerenScreen extends StatelessWidget {
+  /// Constructs a [JongerenScreen]
+  const JongerenScreen({Key? key}) : super(key: key);
+
+  @override
+  Widget build(BuildContext context) {
+    return Scaffold(
+      appBar: AppBar(title: const Text('Jongeren Screen')),
+      body: Center(
+        child: Column(
+          mainAxisAlignment: MainAxisAlignment.center,
+          children: <ElevatedButton>[
+            ElevatedButton(
+              onPressed: () => context.go('/'),
+              child: const Text('Go back to the Home screen'),
             ),
           ],
         ),
       ),
-      floatingActionButton: FloatingActionButton(
-        onPressed: _incrementCounter,
-        tooltip: 'Increment',
-        child: const Icon(Icons.add),
-      ), // This trailing comma makes auto-formatting nicer for build methods.
+    );
+  }
+}
+
+/// The volwassenen screen
+class VolwassenenScreen extends StatelessWidget {
+  /// Constructs a [VolwassenenScreen]
+  const VolwassenenScreen({Key? key}) : super(key: key);
+
+  @override
+  Widget build(BuildContext context) {
+    return Scaffold(
+      appBar: AppBar(title: const Text('Volwassenen Screen')),
+      body: Center(
+        child: Column(
+          mainAxisAlignment: MainAxisAlignment.center,
+          children: <ElevatedButton>[
+            ElevatedButton(
+              onPressed: () => context.go('/'),
+              child: const Text('Go back to the Home screen'),
+            ),
+          ],
+        ),
+      ),
+    );
+  }
+}
+
+/// The nieuwtjes screen
+class NieuwtjesScreen extends StatelessWidget {
+  /// Constructs a [NieuwtjesScreen]
+  const NieuwtjesScreen({Key? key}) : super(key: key);
+
+  @override
+  Widget build(BuildContext context) {
+    return Scaffold(
+      appBar: AppBar(title: const Text('Nieuwtjes Screen')),
+      body: Center(
+        child: Column(
+          mainAxisAlignment: MainAxisAlignment.center,
+          children: <ElevatedButton>[
+            ElevatedButton(
+              onPressed: () => context.go('/'),
+              child: const Text('Go back to the Home screen'),
+            ),
+          ],
+        ),
+      ),
+    );
+  }
+}
+
+/// The website screen
+/// This screen is a webview
+class WebsiteScreen extends StatelessWidget {
+  /// Constructs a [WebsiteScreen]
+  const WebsiteScreen({Key? key}) : super(key: key);
+
+  @override
+  Widget build(BuildContext context) {
+    return Scaffold(
+      appBar: AppBar(title: const Text('Website Screen')),
     );
   }
 }
