@@ -1,5 +1,5 @@
 import 'package:flutter/material.dart';
-import 'package:mobileapp/pages/adult_info_segments.dart';
+import 'package:mobileapp/pages/info_segments.dart';
 
 void main() {
   runApp(MaterialApp(
@@ -7,7 +7,7 @@ void main() {
     theme: ThemeData(fontFamily: 'Poppins'),
     //initialRoute: '/',
     routes: {
-      '/': (context) => const AdultInfoSegments(),
+      '/': (context) => const InfoSegments(),
       // '/HomeScreen': (context) => Home(),
     },
   ));

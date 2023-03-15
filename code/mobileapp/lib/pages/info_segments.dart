@@ -2,14 +2,14 @@ import 'package:flutter/material.dart';
 import 'package:mobileapp/components/list_buttons.dart';
 import 'package:mobileapp/components/header.dart';
 
-class AdultInfoSegments extends StatefulWidget {
-  const AdultInfoSegments({super.key});
+class InfoSegments extends StatefulWidget {
+  const InfoSegments({super.key});
 
   @override
-  State<AdultInfoSegments> createState() => _AdultInfoSegmentsState();
+  State<InfoSegments> createState() => _InfoSegmentsState();
 }
 
-class _AdultInfoSegmentsState extends State<AdultInfoSegments> {
+class _InfoSegmentsState extends State<InfoSegments> {
   List<String> volwassenen = [
     "Afdelingen",
     "Je dossier",
@@ -21,7 +21,7 @@ class _AdultInfoSegmentsState extends State<AdultInfoSegments> {
   @override
   Widget build(BuildContext context) {
     return MaterialApp(
-      title: 'Adult info segments',
+      title: 'Info segments',
       home: Scaffold(
           extendBodyBehindAppBar: true,
           appBar: const Header(title: "Volwassenen"),
