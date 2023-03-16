@@ -1,5 +1,5 @@
 import 'package:flutter/material.dart';
-import 'package:mobileapp/pages/adult_info_segments.dart';
+import 'package:mobileapp/pages/info_segments.dart';
 
 /// The website screen
 /// This screen is a webview
@@ -9,7 +9,8 @@ void main() {
     theme: ThemeData(fontFamily: 'Poppins'),
     // initialRoute: '/',
     routes: {
-      '/adult_info_segments': (context) => const AdultInfoSegments(),
+      '/': (context) => const InfoSegments(),
+      // '/HomeScreen': (context) => Home(),
     },
   ));
 }
