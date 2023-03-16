@@ -1,5 +1,4 @@
 import 'package:flutter/material.dart';
-import 'package:mobileapp/pages/home.dart';
 
 class Header extends StatelessWidget implements PreferredSizeWidget {
   @override
@@ -21,11 +20,8 @@ class Header extends StatelessWidget implements PreferredSizeWidget {
           color: Color(0xFF319EC2),
           weight: 0.9,
         ),
-        iconSize: 35,
-        onPressed: () => Navigator.push(
-          context,
-          MaterialPageRoute(builder: (context) => const HomeScreen()),
-        ),
+        iconSize: 35, onPressed: () => {  },
+      
       ),
       titleTextStyle: const TextStyle(
           fontWeight: FontWeight.w600, color: Color(0xFF319EC2), fontSize: 32),
