@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:mobileapp/pages/home.dart';
 import 'package:mobileapp/pages/info_segments.dart';
 
 /// The website screen
@@ -7,10 +8,10 @@ void main() {
   runApp(MaterialApp(
     debugShowCheckedModeBanner: false,
     theme: ThemeData(fontFamily: 'Poppins'),
-    // initialRoute: '/',
+    initialRoute: '/home',
     routes: {
       '/': (context) => const InfoSegments(),
-      // '/HomeScreen': (context) => Home(),
+      '/home': (context) => const Home(),
     },
   ));
 }
