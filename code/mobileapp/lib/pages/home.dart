@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
-import 'package:mobileapp/components/home_buttons.dart';
+import 'package:font_awesome_flutter/font_awesome_flutter.dart';
+import 'package:mobileapp/components/home_button.dart';
 
 class Home extends StatefulWidget {
   const Home({super.key});
@@ -18,7 +19,7 @@ class _HomeState extends State<Home> {
 
   @override
   Widget build(BuildContext context) {
-        final double screenHeight = MediaQuery.of(context).size.height;
+    final double screenHeight = MediaQuery.of(context).size.height;
 
     return MaterialApp(
         debugShowCheckedModeBanner: false,
@@ -38,8 +39,9 @@ class _HomeState extends State<Home> {
                       crossAxisAlignment: CrossAxisAlignment.center,
                       children: [
                         Container(
-                          margin:
-                            EdgeInsets.only(top: screenHeight * 0.05, bottom: screenHeight * 0.05),
+                          margin: EdgeInsets.only(
+                              top: screenHeight * 0.05,
+                              bottom: screenHeight * 0.05),
                           child: const Center(
                             child: Text(
                               'De Waaiburg VZW',
@@ -57,7 +59,38 @@ class _HomeState extends State<Home> {
                             ),
                           ),
                         ),
-                        HomeButtons(list: paginas),
+                        Expanded(
+                          child: SizedBox(
+                            height: MediaQuery.of(context).size.height,
+                            width: MediaQuery.of(context).size.width,
+                            child: GridView.count(
+                              crossAxisCount: 2,
+                              mainAxisSpacing: 20,
+                              crossAxisSpacing: 20,
+                              childAspectRatio: 1,
+                              primary: false,
+                              shrinkWrap: false,
+                              children: const [
+                                HomeButton(
+                                    name: "JONGEREN",
+                                    icon: FontAwesomeIcons.child,
+                                    iconColor: Color(0xFF319EC2)),
+                                HomeButton(
+                                    name: "VOLWASSENEN",
+                                    icon: FontAwesomeIcons.userTie,
+                                    iconColor: Color(0xBBFFFFFF)),
+                                HomeButton(
+                                    name: "NIEUWTJES",
+                                    icon: FontAwesomeIcons.newspaper,
+                                    iconColor: Color(0xBBFFFFFF)),
+                                HomeButton(
+                                    name: "WEBSITE",
+                                    icon: FontAwesomeIcons.globe,
+                                    iconColor: Color(0xFF319EC2)),
+                              ],
+                            ),
+                          ),
+                        ),
                       ],
                     )))));
   }

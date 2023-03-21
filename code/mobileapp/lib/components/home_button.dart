@@ -2,17 +2,24 @@ import 'package:flutter/material.dart';
 import 'package:font_awesome_flutter/font_awesome_flutter.dart';
 import 'package:google_fonts/google_fonts.dart';
 
-class HomeButtons extends StatelessWidget {
-  const HomeButtons({required this.list, super.key});
+class HomeButton extends StatelessWidget {
+  const HomeButton({
+    super.key,
+    required this.name,
+    required this.icon,
+    required this.iconColor,
+  });
 
-  final List list;
+  final String name;
+  final IconData icon;
+  final Color iconColor;
 
   @override
   Widget build(BuildContext context) {
     Container homeButton() {
       return Container(
         margin: const EdgeInsets.all(0.0),
-        padding: const EdgeInsets.all(18.0),
+        padding: const EdgeInsets.all(0.0),
         decoration: BoxDecoration(
             color: Colors.white.withAlpha(64),
             borderRadius: const BorderRadius.all(Radius.circular(30))),
@@ -20,14 +27,14 @@ class HomeButtons extends StatelessWidget {
           fit: BoxFit.scaleDown,
           child: Column(
             children: [
-              const FaIcon(
-                FontAwesomeIcons.newspaper,
-                color: Color(0xBBFFFFFF),
+              FaIcon(
+                icon,
+                color: iconColor,
                 size: 82,
               ),
               const SizedBox(height: 15), // padding tussen icon en tekst
               Text(
-                "name",
+                name,
                 style: GoogleFonts.poppins(
                     fontSize: 18,
                     fontWeight: FontWeight.w600,
@@ -46,10 +53,6 @@ class HomeButtons extends StatelessWidget {
       );
     }
 
-    return ListView(
-      children: list.asMap().entries.map((info) {
-        return homeButton();
-      }).toList(),
-    );
+    return homeButton();
   }
 }
