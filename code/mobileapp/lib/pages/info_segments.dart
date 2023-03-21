@@ -53,7 +53,7 @@ class _InfoSegmentsState extends State<InfoSegments> {
               return ListButtons(
                   list: snapshot.data!.where((i) => i.sectionId == 1).toList());
             }
-            // show a loading spinner
+            // show a loading spinnersnapshot.data!.where((i) => i.sectionId == 1).toList());
             else {
               return const CircularProgressIndicator();
             }
