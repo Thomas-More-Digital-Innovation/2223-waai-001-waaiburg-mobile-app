@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:mobileapp/api/info.dart';
 
 class ListButtons extends StatelessWidget {
   const ListButtons({
@@ -6,7 +7,7 @@ class ListButtons extends StatelessWidget {
     super.key
     });
 
-    final List list;
+    final List<InfoSegment> list;
 
   @override
   Widget build(BuildContext context) {
@@ -54,7 +55,7 @@ class ListButtons extends StatelessWidget {
     return ListView(
       children: list.asMap().entries.map((info) {
         return buildButtonColumn(buttonColors[info.key % buttonColors.length],
-            info.value.toUpperCase());
+            info.value.title.toUpperCase());
       }).toList(),
     );
   }
