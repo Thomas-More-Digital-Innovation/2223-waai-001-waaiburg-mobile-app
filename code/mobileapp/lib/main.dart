@@ -1,6 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:mobileapp/pages/info_segments.dart';
-import 'package:mobileapp/pages/info.dart';
+import 'package:mobileapp/pages/infotest.dart';
 
 void main() {
   runApp(MaterialApp(
@@ -9,7 +9,7 @@ void main() {
     initialRoute: '/',
     routes: {
       '/': (context) => const InfoSegments(),
-      '/info': (context) => const Info(),
+      '/infotest': (context) => const InfoTest(),
       // '/HomeScreen': (context) => Home(),
     },
   ));

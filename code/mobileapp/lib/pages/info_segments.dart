@@ -1,3 +1,6 @@
+import 'dart:async';
+import 'package:mobileapp/api/info.dart';
+import 'package:mobileapp/api/section.dart';
 import 'package:flutter/material.dart';
 import 'package:mobileapp/components/list_buttons.dart';
 import 'package:mobileapp/components/header.dart';
@@ -10,20 +13,33 @@ class InfoSegments extends StatefulWidget {
 }
 
 class _InfoSegmentsState extends State<InfoSegments> {
-  List<String> volwassenen = [
-    "Afdelingen",
-    "Je dossier",
-    "Verzekeringen",
-    "Klachten",
-    "Nuttige informatie",
-  ];
+  late Future<List<InfoSegment>> futureInfoSegments;
+
+  @override
+  void initState() {
+    super.initState();
+    futureInfoSegments = fetchInfoSegments();
+  }
 
   @override
   Widget build(BuildContext context) {
     return Scaffold(
       extendBodyBehindAppBar: true,
       appBar: const Header(title: "Volwassenen"),
-      body: ListButtons(list: volwassenen),
+      body: FutureBuilder<List<InfoSegment>>(
+        future: futureInfoSegments,
+        builder: (context, snapshot) {
+          if (snapshot.hasData &&
+              snapshot.connectionState == ConnectionState.done) {
+            return ListButtons(
+                list: snapshot.data!.where((i) => i.sectionId == 1).toList());
+          }
+          // show a loading spinner
+          else {
+            return const CircularProgressIndicator();
+          }
+        },
+      ),
     );
   }
 }
