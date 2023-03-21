@@ -14,11 +14,13 @@ class InfoSegments extends StatefulWidget {
 
 class _InfoSegmentsState extends State<InfoSegments> {
   late Future<List<InfoSegment>> futureInfoSegments;
+  late Future<List<Section>> futureSection;
 
   @override
   void initState() {
     super.initState();
     futureInfoSegments = fetchInfoSegments();
+    futureSection = fetchSections();
   }
 
   @override
@@ -27,7 +29,22 @@ class _InfoSegmentsState extends State<InfoSegments> {
       title: 'Adult info segments',
       home: Scaffold(
         extendBodyBehindAppBar: true,
-        appBar: const Header(title: "Volwassenen"),
+        appBar: Header(
+          title: FutureBuilder<List<Section>>(
+            future: futureSection,
+            builder: (context, snapshot) {
+              if (snapshot.hasData &&
+                  snapshot.connectionState == ConnectionState.done) {
+                return Text(
+                    snapshot.data!.firstWhere((i) => i.id == 1).name);
+              }
+              // show a loading spinner
+              else {
+                return const CircularProgressIndicator();
+              }
+            },
+          ),
+        ),
         body: FutureBuilder<List<InfoSegment>>(
           future: futureInfoSegments,
           builder: (context, snapshot) {
