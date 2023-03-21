@@ -14,10 +14,12 @@ class ListButtons extends StatelessWidget {
       Color(0xFF66B794),
     ];
 
-    ElevatedButton buildButtonColumn(Color color, String label) {
+    GestureDetector buildButtonColumn(Color color, String label) {
       final double width = MediaQuery.of(context).size.width;
-      return ElevatedButton(
-        
+      return GestureDetector(
+        onTap: () {
+          Navigator.pushNamed(context, '/info');
+        },
         child: Container(
           margin: EdgeInsets.symmetric(horizontal: width * 0.1, vertical: 18.0),
           padding: EdgeInsets.symmetric(horizontal: width * 0.022),
