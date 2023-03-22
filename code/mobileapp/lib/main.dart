@@ -11,6 +11,7 @@ void main() {
   runApp(MaterialApp(
     debugShowCheckedModeBanner: false,
     theme: ThemeData(fontFamily: 'Poppins'),
+    initialRoute: "/infosegment",
     routes: {
       '/infosegment': (context) => const InfoSegments(
             sectionId: 1,
