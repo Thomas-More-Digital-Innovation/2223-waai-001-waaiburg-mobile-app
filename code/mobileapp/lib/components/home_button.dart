@@ -9,12 +9,14 @@ class HomeButton extends StatelessWidget {
     required this.icon,
     required this.iconColor,
     required this.sectionId,
+    required this.route,
   });
 
   final String name;
   final IconData icon;
   final Color iconColor;
   final int sectionId;
+  final String route;
 
   @override
   Widget build(BuildContext context) {
@@ -23,9 +25,10 @@ class HomeButton extends StatelessWidget {
           onTap: () {
             Navigator.pushNamed(
               context,
-              "/infosegment",
+              route,
               arguments: <String, dynamic>{
               'sectionId': sectionId,
+              'route': route,
             },
             );
           },

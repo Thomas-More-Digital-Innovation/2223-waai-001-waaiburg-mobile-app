@@ -13,9 +13,7 @@ void main() {
     theme: ThemeData(fontFamily: 'Poppins'),
     initialRoute: "/home",
     routes: {
-      '/infosegment': (context) => const InfoSegments(
-            sectionId: 1,
-          ),
+      '/infosegment': (context) => const InfoSegments(),
       '/infocontent': (context) => const InfoContents(),
       '/infocontentselect': (context) => const InfoContentSelected(),
       '/infotest': (context) => const InfoTest(),
