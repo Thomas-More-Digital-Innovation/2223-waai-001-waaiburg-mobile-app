@@ -47,16 +47,33 @@ class _InfoContentSelectedState extends State<InfoContentSelected> {
         builder: (context, snapshot) {
           if (snapshot.hasData &&
               snapshot.connectionState == ConnectionState.done) {
-            return Html(
-              data: snapshot.data!
-                      .firstWhere((i) => i.id == arg['infoId'])
-                      .content ??
-                  '<h1>No content</h1>',
+            return Padding(
+              padding: const EdgeInsets.symmetric(horizontal: 10),
+              child: Column(
+                children: [
+                  Html(
+                    data: snapshot.data!
+                            .firstWhere((i) => i.id == arg['infoId'])
+                            .content ??
+                        '<h1>No content</h1>',
+                  ),
+                  Html(
+                    data: snapshot.data!
+                            .firstWhere((i) => i.id == arg['infoId'])
+                            .url ??
+                        '',
+                    // onLinkTap: (String? url, RenderContext context,
+                    //     Map<String, String> attributes, element) {
+                    //   // print(url);
+                    // }
+                  ),
+                ],
+              ),
             );
           }
           // show a loading spinner
           else {
-            return const CircularProgressIndicator();
+            return const Center(child: CircularProgressIndicator());
           }
         },
       ),
