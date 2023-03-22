@@ -21,8 +21,7 @@ class Header extends StatelessWidget implements PreferredSizeWidget {
           weight: 0.9,
         ),
         iconSize: 35,
-        onPressed: () => Navigator.of(context).pop(),
-      
+        onPressed: () => Navigator.of(context).pop(),      
       ),
       titleTextStyle: const TextStyle(
           fontWeight: FontWeight.w600, color: Color(0xFF319EC2), fontSize: 32),
