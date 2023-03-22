@@ -7,14 +7,12 @@ void main() {
   runApp(MaterialApp(
     debugShowCheckedModeBanner: false,
     theme: ThemeData(fontFamily: 'Poppins'),
-    initialRoute: '/infocontent',
+    initialRoute: '/infosegment',
     routes: {
       '/infosegment': (context) => const InfoSegments(
             sectionId: 1,
           ),
-      '/infocontent': (context) => const InfoContents(
-            infoId: 11,
-          ),
+      '/infocontent': (context) => const InfoContents(),
       '/infotest': (context) => const InfoTest(),
       // '/HomeScreen': (context) => Home(),
     },

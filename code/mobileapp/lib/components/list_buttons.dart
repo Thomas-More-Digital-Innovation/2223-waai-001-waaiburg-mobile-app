@@ -14,11 +14,17 @@ class ListButtons extends StatelessWidget {
       Color(0xFF66B794),
     ];
 
-    GestureDetector buildButtonColumn(Color color, String label) {
+    GestureDetector buildButtonColumn(Color color, String label, int infoId) {
       final double width = MediaQuery.of(context).size.width;
       return GestureDetector(
         onTap: () {
-          Navigator.pushNamed(context, '/infocontent');
+          Navigator.pushNamed(
+            context,
+            '/infocontent',
+            arguments: <String, int>{
+              'infoId': infoId,
+            },
+          );
         },
         child: Container(
           margin: EdgeInsets.symmetric(horizontal: width * 0.1, vertical: 18.0),
@@ -55,7 +61,7 @@ class ListButtons extends StatelessWidget {
     return ListView(
       children: list.asMap().entries.map((info) {
         return buildButtonColumn(buttonColors[info.key % buttonColors.length],
-            info.value.title.toUpperCase());
+            info.value.title.toUpperCase(), info.value.id);
       }).toList(),
     );
   }
