@@ -26,9 +26,7 @@ class _InfoSegmentsState extends State<InfoSegments> {
 
   @override
   Widget build(BuildContext context) {
-    return MaterialApp(
-      title: 'Adult info segments',
-      home: Scaffold(
+    return Scaffold(
         extendBodyBehindAppBar: true,
         appBar: Header(
           title: FutureBuilder<List<Section>>(
@@ -63,7 +61,6 @@ class _InfoSegmentsState extends State<InfoSegments> {
             }
           },
         ),
-      ),
-    );
+      );
   }
 }
