@@ -1,4 +1,5 @@
 import 'dart:async';
+import 'package:url_launcher/url_launcher.dart';
 import 'package:flutter_html/flutter_html.dart';
 import 'package:mobileapp/api/info_content.dart';
 import 'package:flutter/material.dart';
@@ -23,6 +24,9 @@ class _InfoContentSelectedState extends State<InfoContentSelected> {
   @override
   Widget build(BuildContext context) {
     final arg = ModalRoute.of(context)!.settings.arguments as Map;
+
+    final Uri _url = Uri.parse('https://flutter.dev');
+
     return Scaffold(
       extendBodyBehindAppBar: false,
       appBar: Header(
@@ -62,10 +66,13 @@ class _InfoContentSelectedState extends State<InfoContentSelected> {
                             .firstWhere((i) => i.id == arg['infoId'])
                             .url ??
                         '',
-                    // onLinkTap: (String? url, RenderContext context,
-                    //     Map<String, String> attributes, element) {
-                    //   // print(url);
-                    // }
+                    onLinkTap: (url, _, __, ___) {
+                      String url = (snapshot.data!
+                              .firstWhere((i) => i.id == arg['infoId'])
+                              .url ??
+                          '');
+                      _launchUrl(url);
+                    },
                   ),
                 ],
               ),
@@ -78,5 +85,11 @@ class _InfoContentSelectedState extends State<InfoContentSelected> {
         },
       ),
     );
+  }
+}
+
+Future<void> _launchUrl(String url) async {
+  if (!await launchUrl(url)) {
+    throw Exception('Could not launch $url');
   }
 }
