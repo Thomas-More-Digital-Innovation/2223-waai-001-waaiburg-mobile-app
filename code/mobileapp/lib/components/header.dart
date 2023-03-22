@@ -4,8 +4,8 @@ class Header extends StatelessWidget implements PreferredSizeWidget {
   @override
   Size get preferredSize => const Size.fromHeight(55);
 
-  const Header({required this.title, super.key});
   final Widget title;
+  const Header({required this.title, super.key});
 
   @override
   Widget build(BuildContext context) {

@@ -1,10 +1,9 @@
 import 'package:flutter/material.dart';
-import 'package:mobileapp/api/info.dart';
 
 class ListButtons extends StatelessWidget {
   const ListButtons({required this.list, super.key});
 
-  final List<InfoSegment> list;
+  final List list;
 
   @override
   Widget build(BuildContext context) {
@@ -19,7 +18,7 @@ class ListButtons extends StatelessWidget {
       final double width = MediaQuery.of(context).size.width;
       return GestureDetector(
         onTap: () {
-          Navigator.pushNamed(context, '/infotest');
+          Navigator.pushNamed(context, '/infocontent');
         },
         child: Container(
           margin: EdgeInsets.symmetric(horizontal: width * 0.1, vertical: 18.0),
