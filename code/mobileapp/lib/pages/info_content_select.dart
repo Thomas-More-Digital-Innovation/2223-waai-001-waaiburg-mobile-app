@@ -1,9 +1,9 @@
 import 'dart:async';
-import 'package:url_launcher/url_launcher.dart';
 import 'package:flutter_html/flutter_html.dart';
 import 'package:mobileapp/api/info_content.dart';
 import 'package:flutter/material.dart';
 import 'package:mobileapp/components/header.dart';
+import 'package:url_launcher/url_launcher.dart';
 
 class InfoContentSelected extends StatefulWidget {
   const InfoContentSelected({super.key});
@@ -24,9 +24,6 @@ class _InfoContentSelectedState extends State<InfoContentSelected> {
   @override
   Widget build(BuildContext context) {
     final arg = ModalRoute.of(context)!.settings.arguments as Map;
-
-    final Uri _url = Uri.parse('https://flutter.dev');
-
     return Scaffold(
       extendBodyBehindAppBar: false,
       appBar: Header(
@@ -61,18 +58,21 @@ class _InfoContentSelectedState extends State<InfoContentSelected> {
                             .content ??
                         '<h1>No content</h1>',
                   ),
-                  Html(
-                    data: snapshot.data!
-                            .firstWhere((i) => i.id == arg['infoId'])
-                            .url ??
-                        '',
-                    onLinkTap: (url, _, __, ___) {
-                      String url = (snapshot.data!
-                              .firstWhere((i) => i.id == arg['infoId'])
-                              .url ??
-                          '');
-                      _launchUrl(url);
-                    },
+                  Row(
+                    children: [
+                      const Text('Meer Info: '),
+                      InkWell(
+                        child: Text(
+                            '${snapshot.data!.firstWhere((i) => i.id == arg['infoId']).url}',
+                            style: const TextStyle(
+                                color: Colors.blue,
+                                decoration: TextDecoration.underline)),
+                        onTap: () => launchUrl(Uri.parse(snapshot.data!
+                                .firstWhere((i) => i.id == arg['infoId'])
+                                .url ??
+                            '')),
+                      ),
+                    ],
                   ),
                 ],
               ),
@@ -85,11 +85,5 @@ class _InfoContentSelectedState extends State<InfoContentSelected> {
         },
       ),
     );
-  }
-}
-
-Future<void> _launchUrl(String url) async {
-  if (!await launchUrl(url)) {
-    throw Exception('Could not launch $url');
   }
 }
