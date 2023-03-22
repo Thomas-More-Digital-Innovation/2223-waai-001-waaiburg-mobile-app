@@ -4,16 +4,16 @@ class Header extends StatelessWidget implements PreferredSizeWidget {
   @override
   Size get preferredSize => const Size.fromHeight(55);
 
+  final Widget title;
   const Header({required this.title, super.key});
-  final String title;
 
   @override
   Widget build(BuildContext context) {
     return AppBar(
-      title: Text(title.toUpperCase()),
+      title: title,
       centerTitle: true,
-      backgroundColor: Colors.transparent,
       elevation: 0,
+      backgroundColor: Colors.grey[50],
       leading: IconButton(
         icon: const Icon(
           Icons.arrow_back_ios,

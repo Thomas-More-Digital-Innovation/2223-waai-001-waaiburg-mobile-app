@@ -1,42 +1,42 @@
 import 'dart:async';
+import 'package:mobileapp/api/info_content.dart';
 import 'package:mobileapp/api/info.dart';
-import 'package:mobileapp/api/section.dart';
 import 'package:flutter/material.dart';
 import 'package:mobileapp/components/list_buttons.dart';
 import 'package:mobileapp/components/header.dart';
 
-class InfoSegments extends StatefulWidget {
-  final int sectionId;
-  const InfoSegments({required this.sectionId, super.key});
+class InfoContents extends StatefulWidget {
+  const InfoContents({super.key});
 
   @override
-  State<InfoSegments> createState() => _InfoSegmentsState();
+  State<InfoContents> createState() => _InfoContentsState();
 }
 
-class _InfoSegmentsState extends State<InfoSegments> {
+class _InfoContentsState extends State<InfoContents> {
+  late Future<List<InfoContent>> futureInfoContents;
   late Future<List<InfoSegment>> futureInfoSegments;
-  late Future<List<Section>> futureSection;
 
   @override
   void initState() {
     super.initState();
+    futureInfoContents = fetchInfoContents();
     futureInfoSegments = fetchInfoSegments();
-    futureSection = fetchSections();
   }
 
   @override
   Widget build(BuildContext context) {
+    final arg = ModalRoute.of(context)!.settings.arguments as Map;
     return Scaffold(
       extendBodyBehindAppBar: true,
       appBar: Header(
-        title: FutureBuilder<List<Section>>(
-          future: futureSection,
+        title: FutureBuilder<List<InfoSegment>>(
+          future: futureInfoSegments,
           builder: (context, snapshot) {
             if (snapshot.hasData &&
                 snapshot.connectionState == ConnectionState.done) {
               return Text(snapshot.data!
-                  .firstWhere((i) => i.id == widget.sectionId)
-                  .name);
+                  .firstWhere((i) => i.id == arg['infoId'])
+                  .title);
             }
             // show a loading spinner
             else {
@@ -45,16 +45,16 @@ class _InfoSegmentsState extends State<InfoSegments> {
           },
         ),
       ),
-      body: FutureBuilder<List<InfoSegment>>(
-        future: futureInfoSegments,
+      body: FutureBuilder<List<InfoContent>>(
+        future: futureInfoContents,
         builder: (context, snapshot) {
           if (snapshot.hasData &&
               snapshot.connectionState == ConnectionState.done) {
             return ListButtons(
                 list: snapshot.data!
-                    .where((i) => i.sectionId == widget.sectionId)
+                    .where((i) => i.infoId == arg['infoId'])
                     .toList(),
-                route: '/infocontent');
+                route: '/infocontentselect');
           }
           // show a loading spinnersnapshot.data!.where((i) => i.sectionId == 1).toList());
           else {
