@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:mobileapp/pages/info_content_select.dart';
 import 'package:mobileapp/pages/info_segments.dart';
 import 'package:mobileapp/pages/infotest.dart';
 import 'package:mobileapp/pages/info_contents.dart';
@@ -13,6 +14,7 @@ void main() {
             sectionId: 1,
           ),
       '/infocontent': (context) => const InfoContents(),
+      '/infocontentselect': (context) => const InfoContentSelected(),
       '/infotest': (context) => const InfoTest(),
       // '/HomeScreen': (context) => Home(),
     },
