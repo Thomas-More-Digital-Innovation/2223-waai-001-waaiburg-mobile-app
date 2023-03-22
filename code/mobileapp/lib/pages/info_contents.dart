@@ -53,7 +53,8 @@ class _InfoContentsState extends State<InfoContents> {
             return ListButtons(
                 list: snapshot.data!
                     .where((i) => i.infoId == arg['infoId'])
-                    .toList());
+                    .toList(),
+                route: '/infocontentselect');
           }
           // show a loading spinnersnapshot.data!.where((i) => i.sectionId == 1).toList());
           else {
