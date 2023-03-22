@@ -26,8 +26,9 @@ class HomeButton extends StatelessWidget {
             Navigator.pushNamed(
               context,
               route,
-              arguments: <String, int>{
+              arguments: <String, dynamic>{
               'sectionId': sectionId,
+              'route': route,
             },
             );
           },
