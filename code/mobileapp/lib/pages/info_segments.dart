@@ -27,25 +27,25 @@ class _InfoSegmentsState extends State<InfoSegments> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      extendBodyBehindAppBar: true,
-      appBar: Header(
-        title: FutureBuilder<List<Section>>(
-          future: futureSection,
-          builder: (context, snapshot) {
-            if (snapshot.hasData &&
-                snapshot.connectionState == ConnectionState.done) {
-              return Text(snapshot.data!
-                  .firstWhere((i) => i.id == widget.sectionId)
-                  .name);
-            }
-            // show a loading spinner
-            else {
-              return const CircularProgressIndicator();
-            }
-          },
+        extendBodyBehindAppBar: true,
+        appBar: Header(
+          title: FutureBuilder<List<Section>>(
+            future: futureSection,
+            builder: (context, snapshot) {
+              if (snapshot.hasData &&
+                  snapshot.connectionState == ConnectionState.done) {
+                return Text(snapshot.data!
+                    .firstWhere((i) => i.id == widget.sectionId)
+                    .name);
+              }
+              // show a loading spinner
+              else {
+                return const CircularProgressIndicator();
+              }
+            },
+          ),
         ),
-      ),
-      body: FutureBuilder<List<InfoSegment>>(
+        body: FutureBuilder<List<InfoSegment>>(
         future: futureInfoSegments,
         builder: (context, snapshot) {
           if (snapshot.hasData &&
