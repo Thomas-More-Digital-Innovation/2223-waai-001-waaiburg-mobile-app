@@ -46,21 +46,21 @@ class _InfoSegmentsState extends State<InfoSegments> {
           ),
         ),
         body: FutureBuilder<List<InfoSegment>>(
-          future: futureInfoSegments,
-          builder: (context, snapshot) {
-            if (snapshot.hasData &&
-                snapshot.connectionState == ConnectionState.done) {
-              return ListButtons(
-                  list: snapshot.data!
-                      .where((i) => i.sectionId == widget.sectionId)
-                      .toList());
-            }
-            // show a loading spinnersnapshot.data!.where((i) => i.sectionId == 1).toList());
-            else {
-              return const CircularProgressIndicator();
-            }
-          },
-        ),
-      );
+        future: futureInfoSegments,
+        builder: (context, snapshot) {
+          if (snapshot.hasData &&
+              snapshot.connectionState == ConnectionState.done) {
+            return ListButtons(
+                list: snapshot.data!
+                    .where((i) => i.sectionId == widget.sectionId)
+                    .toList());
+          }
+          // show a loading spinnersnapshot.data!.where((i) => i.sectionId == 1).toList());
+          else {
+            return const CircularProgressIndicator();
+          }
+        },
+      ),
+    );
   }
 }
