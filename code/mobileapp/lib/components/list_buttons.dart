@@ -1,9 +1,14 @@
 import 'package:flutter/material.dart';
 
 class ListButtons extends StatelessWidget {
-  const ListButtons({required this.list, super.key});
+  const ListButtons({
+    required this.list,
+    required this.route,
+    super.key,
+  });
 
   final List list;
+  final String route;
 
   @override
   Widget build(BuildContext context) {
@@ -14,15 +19,17 @@ class ListButtons extends StatelessWidget {
       Color(0xFF66B794),
     ];
 
-    GestureDetector buildButtonColumn(Color color, String label, int infoId) {
+    GestureDetector buildButtonColumn(
+        Color color, String label, int infoId, String pageRoute) {
       final double width = MediaQuery.of(context).size.width;
       return GestureDetector(
         onTap: () {
           Navigator.pushNamed(
             context,
-            '/infocontent',
-            arguments: <String, int>{
+            pageRoute,
+            arguments: <String, dynamic>{
               'infoId': infoId,
+              'route': pageRoute,
             },
           );
         },
@@ -60,8 +67,12 @@ class ListButtons extends StatelessWidget {
 
     return ListView(
       children: list.asMap().entries.map((info) {
-        return buildButtonColumn(buttonColors[info.key % buttonColors.length],
-            info.value.title.toUpperCase(), info.value.id);
+        return buildButtonColumn(
+          buttonColors[info.key % buttonColors.length],
+          info.value.title.toUpperCase(),
+          info.value.id,
+          route,
+        );
       }).toList(),
     );
   }
