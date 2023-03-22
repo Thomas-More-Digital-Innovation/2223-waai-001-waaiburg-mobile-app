@@ -10,13 +10,6 @@ class Home extends StatefulWidget {
 }
 
 class _HomeState extends State<Home> {
-  List<String> paginas = [
-    "Jongeren",
-    "Volwassenen",
-    "Nieuwtjes",
-    "Website",
-  ];
-
   @override
   Widget build(BuildContext context) {
     final double screenHeight = MediaQuery.of(context).size.height;
