@@ -51,7 +51,6 @@ class _InfoSegmentsState extends State<InfoSegments> {
           if (snapshot.hasData &&
               snapshot.connectionState == ConnectionState.done) {
             return ListButtons(
-                isImageButton: false,
                 list: snapshot.data!
                     .where((i) => i.sectionId == widget.sectionId)
                     .toList());

@@ -51,7 +51,6 @@ class _InfoContentsState extends State<InfoContents> {
           if (snapshot.hasData &&
               snapshot.connectionState == ConnectionState.done) {
             return ListButtons(
-                isImageButton: true,
                 list: snapshot.data!
                     .where((i) => i.infoId == arg['infoId'])
                     .toList());

@@ -1,9 +1,9 @@
 import 'package:flutter/material.dart';
+import 'package:mobileapp/api/info.dart';
 
 class ListButtons extends StatelessWidget {
-  const ListButtons({required this.list, required this.isImageButton, super.key});
-
-  final bool isImageButton;
+  const ListButtons(
+      {required this.list, super.key});
   final List list;
 
   @override
@@ -97,20 +97,23 @@ class ListButtons extends StatelessWidget {
       );
     }
 
-    if (isImageButton) {
-      return ListView(
-        children: list.asMap().entries.map((arg) {
-          return buildButtonColumnWithImage(
-              Colors.white, arg.value.titleImage, arg.value.id);
-        }).toList(),
-      );
-    } else {
-      return ListView(
-        children: list.asMap().entries.map((info) {
+    return ListView(
+      children: list.asMap().entries.map((info) {
+        if (info.runtimeType == MapEntry<int, InfoSegment>) {
           return buildButtonColumn(buttonColors[info.key % buttonColors.length],
               info.value.title.toUpperCase(), info.value.id);
-        }).toList(),
-      );
-    }
+        } else {
+          if (info.value.titleImage != null) {
+            return buildButtonColumnWithImage(
+                Colors.white, info.value.titleImage, info.value.id);
+          } else {
+            return buildButtonColumn(
+                buttonColors[info.key % buttonColors.length],
+                info.value.title.toUpperCase(),
+                info.value.id);
+          }
+        }
+      }).toList(),
+    );
   }
 }
