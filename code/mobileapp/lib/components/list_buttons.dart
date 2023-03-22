@@ -2,7 +2,6 @@ import 'package:flutter/material.dart';
 import 'package:mobileapp/api/info.dart';
 
 class ListButtons extends StatelessWidget {
-
   const ListButtons({
     required this.list,
     required this.route,
@@ -68,15 +67,16 @@ class ListButtons extends StatelessWidget {
     }
 
     GestureDetector buildButtonColumnWithImage(
-        Color color, String label, int infoId) {
+        Color color, String label, int infoId, String pageRoute) {
       final double width = MediaQuery.of(context).size.width;
       return GestureDetector(
         onTap: () {
           Navigator.pushNamed(
             context,
-            '/infocontent',
-            arguments: <String, int>{
+            pageRoute,
+            arguments: <String, dynamic>{
               'infoId': infoId,
+              'route': pageRoute,
             },
           );
         },
@@ -108,20 +108,29 @@ class ListButtons extends StatelessWidget {
     return ListView(
       children: list.asMap().entries.map((info) {
         if (info.runtimeType == MapEntry<int, InfoSegment>) {
-          return buildButtonColumn(buttonColors[info.key % buttonColors.length],
-              info.value.title.toUpperCase(), info.value.id, route,);
+          return buildButtonColumn(
+            buttonColors[info.key % buttonColors.length],
+            info.value.title.toUpperCase(),
+            info.value.id,
+            route,
+          );
         } else {
           if (info.value.titleImage != null) {
             return buildButtonColumnWithImage(
-                Colors.white, info.value.titleImage, info.value.id, route,);
+              Colors.white,
+              info.value.titleImage,
+              info.value.id,
+              route,
+            );
           } else {
             return buildButtonColumn(
-                buttonColors[info.key % buttonColors.length],
-                info.value.title.toUpperCase(),
-                info.value.id, route,);
+              buttonColors[info.key % buttonColors.length],
+              info.value.title.toUpperCase(),
+              info.value.id,
+              route,
+            );
           }
         }
-
       }).toList(),
     );
   }
