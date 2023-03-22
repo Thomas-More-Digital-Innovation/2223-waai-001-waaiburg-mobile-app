@@ -1,8 +1,9 @@
 import 'package:flutter/material.dart';
 
 class ListButtons extends StatelessWidget {
-  const ListButtons({required this.list, super.key});
+  const ListButtons({required this.list, required this.isImageButton, super.key});
 
+  final bool isImageButton;
   final List list;
 
   @override
@@ -58,11 +59,58 @@ class ListButtons extends StatelessWidget {
       );
     }
 
-    return ListView(
-      children: list.asMap().entries.map((info) {
-        return buildButtonColumn(buttonColors[info.key % buttonColors.length],
-            info.value.title.toUpperCase(), info.value.id);
-      }).toList(),
-    );
+    GestureDetector buildButtonColumnWithImage(
+        Color color, String label, int infoId) {
+      final double width = MediaQuery.of(context).size.width;
+      return GestureDetector(
+        onTap: () {
+          Navigator.pushNamed(
+            context,
+            '/infocontent',
+            arguments: <String, int>{
+              'infoId': infoId,
+            },
+          );
+        },
+        child: Container(
+          margin: EdgeInsets.symmetric(horizontal: width * 0.1, vertical: 18.0),
+          padding: EdgeInsets.symmetric(horizontal: width * 0.022),
+          height: width / 4,
+          alignment: Alignment.center,
+          decoration: BoxDecoration(
+            borderRadius: BorderRadius.circular(width * 0.08),
+            color: color,
+            boxShadow: [
+              BoxShadow(
+                color: Colors.grey[600]!,
+                offset: const Offset(
+                  0.0,
+                  5.0,
+                ),
+                blurRadius: 10.0,
+                spreadRadius: -1.5,
+              ),
+            ],
+          ),
+          child: Image.network(label),
+        ),
+      );
+    }
+
+    if (isImageButton) {
+      return ListView(
+        children: list.asMap().entries.map((arg) {
+          return buildButtonColumnWithImage(
+              Colors.white, arg.value.titleImage, arg.value.id);
+        }).toList(),
+      );
+    } else {
+      return ListView(
+        children: list.asMap().entries.map((info) {
+          return buildButtonColumn(buttonColors[info.key % buttonColors.length],
+              info.value.title.toUpperCase(), info.value.id);
+        }).toList(),
+      );
+    }
   }
 }
