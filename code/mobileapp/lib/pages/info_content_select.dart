@@ -3,6 +3,7 @@ import 'package:flutter_html/flutter_html.dart';
 import 'package:mobileapp/api/info_content.dart';
 import 'package:flutter/material.dart';
 import 'package:mobileapp/components/header.dart';
+import 'package:url_launcher/url_launcher.dart';
 
 class InfoContentSelected extends StatefulWidget {
   const InfoContentSelected({super.key});
@@ -57,15 +58,21 @@ class _InfoContentSelectedState extends State<InfoContentSelected> {
                             .content ??
                         '<h1>No content</h1>',
                   ),
-                  Html(
-                    data: snapshot.data!
-                            .firstWhere((i) => i.id == arg['infoId'])
-                            .url ??
-                        '',
-                    // onLinkTap: (String? url, RenderContext context,
-                    //     Map<String, String> attributes, element) {
-                    //   // print(url);
-                    // }
+                  Row(
+                    children: [
+                      const Text('Meer Info: '),
+                      InkWell(
+                        child: Text(
+                            '${snapshot.data!.firstWhere((i) => i.id == arg['infoId']).url}',
+                            style: const TextStyle(
+                                color: Colors.blue,
+                                decoration: TextDecoration.underline)),
+                        onTap: () => launchUrl(Uri.parse(snapshot.data!
+                                .firstWhere((i) => i.id == arg['infoId'])
+                                .url ??
+                            '')),
+                      ),
+                    ],
                   ),
                 ],
               ),
