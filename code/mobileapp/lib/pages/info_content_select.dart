@@ -58,21 +58,29 @@ class _InfoContentSelectedState extends State<InfoContentSelected> {
                             .content ??
                         '<h1>No content</h1>',
                   ),
-                  Row(
-                    children: [
-                      const Text('Meer Info: '),
-                      InkWell(
-                        child: Text(
-                            '${snapshot.data!.firstWhere((i) => i.id == arg['infoId']).url}',
-                            style: const TextStyle(
-                                color: Colors.blue,
-                                decoration: TextDecoration.underline)),
-                        onTap: () => launchUrl(Uri.parse(snapshot.data!
-                                .firstWhere((i) => i.id == arg['infoId'])
-                                .url ??
-                            '')),
-                      ),
-                    ],
+                  Visibility(
+                    visible: snapshot.data!
+                            .firstWhere((i) => i.id == arg['infoId'])
+                            .url !=
+                        null,
+                    child: InkWell(
+                      child: Container(
+                          padding: const EdgeInsets.all(10),
+                          decoration: const BoxDecoration(
+                            borderRadius: BorderRadius.all(Radius.circular(10)),
+                            color: Colors.blueAccent,
+                          ),
+                          child: const Text('Meer Info',
+                              style: TextStyle(
+                                color: Colors.white,
+                                fontSize: 26,
+                                fontWeight: FontWeight.bold,
+                              ))),
+                      onTap: () => launchUrl(Uri.parse(snapshot.data!
+                              .firstWhere((i) => i.id == arg['infoId'])
+                              .url ??
+                          '')),
+                    ),
                   ),
                 ],
               ),
