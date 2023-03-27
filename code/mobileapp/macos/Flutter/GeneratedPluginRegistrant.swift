@@ -7,6 +7,7 @@ import Foundation
 
 import path_provider_foundation
 import url_launcher_macos
+
 import wakelock_macos
 
 func RegisterGeneratedPlugins(registry: FlutterPluginRegistry) {
