@@ -86,7 +86,7 @@ class _HomeState extends State<Home> {
                               icon: FontAwesomeIcons.globe,
                               iconColor: Color(0xFF319EC2),
                               sectionId: 1,
-                              route: "/infosegment",
+                              route: "https://www.dewaaiburg.be/",
                             ),
                           ],
                         ),
