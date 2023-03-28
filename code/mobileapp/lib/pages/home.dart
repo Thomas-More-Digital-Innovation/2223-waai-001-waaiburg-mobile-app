@@ -79,7 +79,7 @@ class _HomeState extends State<Home> {
                               icon: FontAwesomeIcons.newspaper,
                               iconColor: Color(0xBBFFFFFF),
                               sectionId: 3,
-                              route: "/infosegment",
+                              route: "/news",
                             ),
                             HomeButton(
                               name: "WEBSITE",
