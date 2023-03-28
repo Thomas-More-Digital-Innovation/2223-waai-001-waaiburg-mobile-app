@@ -5,7 +5,7 @@ import 'dart:async';
 
 Future<List<Section>> fetchSections() async {
   final response = await http.get(
-    Uri.parse('http://10.0.2.2:8000/api/section'));
+    Uri.parse('http://127.0.0.1:8000/api/section'));
     
   if (response.statusCode == 200) {
     Iterable sections = jsonDecode(response.body)["sections"][0];

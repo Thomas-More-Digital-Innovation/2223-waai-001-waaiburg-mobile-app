@@ -3,7 +3,7 @@ import 'dart:convert';
 import 'dart:async';
 
 Future<List<InfoSegment>> fetchInfoSegments() async {
-  final response = await http.get(Uri.parse('http://10.0.2.2:8000/api/info'));
+  final response = await http.get(Uri.parse('http://127.0.0.1:8000/api/info'));
 
   if (response.statusCode == 200) {
     Iterable infoSegments = jsonDecode(response.body)["info's"][0];

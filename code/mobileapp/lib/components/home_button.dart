@@ -24,7 +24,7 @@ class HomeButton extends StatelessWidget {
     GestureDetector homeButton() {
       return GestureDetector(
           onTap: () {
-            if (route != "/infosegment") {
+            if (route.substring(0, 5) == "https") {
               launchUrlString(route);
               return;
             }
@@ -32,9 +32,9 @@ class HomeButton extends StatelessWidget {
               context,
               route,
               arguments: <String, dynamic>{
-              'sectionId': sectionId,
-              'route': route,
-            },
+                'sectionId': sectionId,
+                'route': route,
+              },
             );
           },
           child: Container(
