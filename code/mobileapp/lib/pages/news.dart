@@ -5,6 +5,7 @@ import 'package:mobileapp/api/section.dart';
 import 'package:flutter/material.dart';
 import 'package:mobileapp/components/list_buttons.dart';
 import 'package:mobileapp/components/header.dart';
+import 'package:mobileapp/components/list_cards.dart';
 
 class News extends StatefulWidget {
   const News({super.key});
@@ -44,7 +45,10 @@ class _NewsState extends State<News> {
   Widget build(BuildContext context) {
     return Scaffold(
       extendBodyBehindAppBar: true,
+      backgroundColor: Colors.transparent,
       appBar: Header(
+        bgcolor: Colors.transparent,
+        titleColor: 0xFFFFFFFF,
         title: FutureBuilder<List<Section>>(
           future: futureSection,
           builder: (context, snapshot) {
@@ -59,27 +63,36 @@ class _NewsState extends State<News> {
           },
         ),
       ),
-      body: FutureBuilder<List<dynamic>>(
-        future: futureNews,
-        builder: (context, snapshot) {
-          if (snapshot.hasData &&
-              snapshot.connectionState == ConnectionState.done) {
-            return ListView(
-              children: snapshot.data!.asMap().entries.map((info) {
-                return buildButtonColumn(
-                  buttonColors[info.key % buttonColors.length],
-                  info.value.content.toUpperCase(),
-                  info.value.id,
-                  "route",
-                );
-              }).toList(),
-            );
-          }
-          // show a loading spinnersnapshot.data!.where((i) => i.sectionId == 1).toList());
-          else {
-            return const CircularProgressIndicator();
-          }
-        },
+      body: Container(
+        decoration: const BoxDecoration(
+          gradient: LinearGradient(
+            begin: Alignment.topLeft,
+            colors: [Color(0xFFF25B58), Color(0xFFF38E3B)],
+          ),
+        ),
+        child: FutureBuilder<List<dynamic>>(
+          future: futureNews,
+          builder: (context, snapshot) {
+            if (snapshot.hasData &&
+                snapshot.connectionState == ConnectionState.done) {
+              return ListView(
+                children: snapshot.data!.asMap().entries.map((info) {
+                  return ListCard(
+                    route: '/infocontentselect',
+                    infoId: info.value.id,
+                    title: info.value.title.toUpperCase(),
+                    subText: info.value.shortContent,
+                    date: DateTime.parse(info.value.updatedAt),
+                  );
+                }).toList(),
+              );
+            }
+            // show a loading spinnersnapshot.data!.where((i) => i.sectionId == 1).toList());
+            else {
+              return const CircularProgressIndicator();
+            }
+          },
+        ),
       ),
     );
   }

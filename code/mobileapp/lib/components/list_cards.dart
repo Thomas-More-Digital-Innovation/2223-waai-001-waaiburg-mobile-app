@@ -8,12 +8,14 @@ class ListCard extends StatelessWidget {
       required this.infoId,
       required this.title,
       required this.subText,
+      required this.date,
       super.key});
 
   final String route;
   final int infoId;
   final String title;
   final String subText;
+  final DateTime date;
 
   @override
   Widget build(BuildContext context) {
@@ -31,20 +33,42 @@ class ListCard extends StatelessWidget {
       },
       child: Card(
         margin: EdgeInsets.symmetric(horizontal: width * 0.1, vertical: 18.0),
+        elevation: 5,
+        shape: RoundedRectangleBorder(
+          borderRadius: BorderRadius.circular(20),
+          //set border radius more than 50% of height and width to make circle
+        ),
         child: Column(
           children: [
-            Text(
-              title,
-              style: const TextStyle(
-                fontSize: 24,
-                fontWeight: FontWeight.w600,
+            Padding(
+              padding: const EdgeInsets.all(8.0),
+              child: Text(
+                textAlign: TextAlign.center,
+                title,
+                style: const TextStyle(
+                  color: Color(0xFF319EC2),
+                  fontSize: 24,
+                  fontWeight: FontWeight.w600,
+                ),
               ),
             ),
-            Text(
-              subText,
-              style: const TextStyle(
-                fontSize: 18,
-                fontWeight: FontWeight.w400,
+            Padding(
+              padding: const EdgeInsets.all(8.0),
+              child: Text(
+                subText,
+                style: const TextStyle(
+                  fontSize: 18,
+                  fontWeight: FontWeight.w400,
+                ),
+              ),
+            ),
+            Padding(
+              padding: const EdgeInsets.all(8.0),
+              child: Row(
+                mainAxisAlignment: MainAxisAlignment.end,
+                children: [
+                  Text('${date.day}/${date.month}/${date.year}'),
+                ],
               ),
             ),
           ],
