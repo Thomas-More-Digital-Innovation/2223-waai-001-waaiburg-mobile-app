@@ -55,6 +55,7 @@ class ListButtons extends StatelessWidget {
             ],
           ),
           child: Text(
+            textAlign: TextAlign.center,
             label,
             style: const TextStyle(
               fontSize: 24,
