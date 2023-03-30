@@ -43,54 +43,61 @@ class _InfoContentSelectedState extends State<InfoContentSelected> {
           },
         ),
       ),
-      body: FutureBuilder<List<InfoContent>>(
-        future: futureInfoContents,
-        builder: (context, snapshot) {
-          if (snapshot.hasData &&
-              snapshot.connectionState == ConnectionState.done) {
-            return Padding(
-              padding: const EdgeInsets.symmetric(horizontal: 10),
-              child: Column(
-                children: [
-                  Html(
-                    data: snapshot.data!
-                            .firstWhere((i) => i.id == arg['infoId'])
-                            .content ??
-                        '<h1>No content</h1>',
-                  ),
-                  Visibility(
-                    visible: snapshot.data!
-                            .firstWhere((i) => i.id == arg['infoId'])
-                            .url !=
-                        null,
-                    child: InkWell(
-                      child: Container(
-                          padding: const EdgeInsets.all(10),
-                          decoration: const BoxDecoration(
-                            borderRadius: BorderRadius.all(Radius.circular(10)),
-                            color: Colors.blueAccent,
-                          ),
-                          child: const Text('Meer Info',
-                              style: TextStyle(
-                                color: Colors.white,
-                                fontSize: 26,
-                                fontWeight: FontWeight.bold,
-                              ))),
-                      onTap: () => launchUrl(Uri.parse(snapshot.data!
+      body: SingleChildScrollView(
+        child: FutureBuilder<List<InfoContent>>(
+          future: futureInfoContents,
+          builder: (context, snapshot) {
+            if (snapshot.hasData &&
+                snapshot.connectionState == ConnectionState.done) {
+              return Padding(
+                padding: const EdgeInsets.symmetric(horizontal: 10),
+                child: Column(
+                  children: [
+                    Html(
+                      data: snapshot.data!
                               .firstWhere((i) => i.id == arg['infoId'])
-                              .url ??
-                          '')),
+                              .content ??
+                          '<h1>No content</h1>',
+                      onLinkTap: (url, _, __, ___) {
+                        launchUrl(Uri.parse(url ?? ''));
+                      },
                     ),
-                  ),
-                ],
-              ),
-            );
-          }
-          // show a loading spinner
-          else {
-            return const Center(child: CircularProgressIndicator());
-          }
-        },
+                    Visibility(
+                      visible: snapshot.data!
+                              .firstWhere((i) => i.id == arg['infoId'])
+                              .url !=
+                          null,
+                      child: InkWell(
+                        child: Container(
+                            margin: const EdgeInsets.all(20),
+                            padding: const EdgeInsets.all(10),
+                            decoration: const BoxDecoration(
+                              borderRadius:
+                                  BorderRadius.all(Radius.circular(10)),
+                              color: Colors.blueAccent,
+                            ),
+                            child: const Text('Meer Info',
+                                style: TextStyle(
+                                  color: Colors.white,
+                                  fontSize: 26,
+                                  fontWeight: FontWeight.bold,
+                                ))),
+                        onTap: () => launchUrl(Uri.parse(snapshot.data!
+                                .firstWhere((i) => i.id == arg['infoId'])
+                                .url ??
+                            '')),
+                      ),
+                    ),
+                  ],
+                ),
+              );
+            }
+            // show a loading spinner
+            else {
+              return const Center(child: CircularProgressIndicator());
+            }
+          },
+        ),
       ),
     );
   }
