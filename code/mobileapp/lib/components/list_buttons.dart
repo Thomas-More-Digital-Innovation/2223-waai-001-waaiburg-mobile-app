@@ -14,10 +14,10 @@ class ListButtons extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     const List<Color> buttonColors = [
-      Color(0xFFF6B651),
-      Color(0xFFEB7B5C),
-      Color(0xFF319EC2),
-      Color(0xFF66B794),
+      Color(0xFFf9cc3e),
+      Color(0xFFb1b4dc),
+      Color(0xFF3855a2),
+      Color(0xFF46ae93),
     ];
 
     GestureDetector buildButtonColumn(

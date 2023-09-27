@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:font_awesome_flutter/font_awesome_flutter.dart';
 import 'package:mobileapp/components/home_button.dart';
+import 'package:flutter_svg/flutter_svg.dart';
 
 class Home extends StatefulWidget {
   const Home({super.key});
@@ -16,12 +17,7 @@ class _HomeState extends State<Home> {
 
     return Scaffold(
         body: Container(
-            decoration: const BoxDecoration(
-              gradient: LinearGradient(
-                begin: Alignment.topLeft,
-                colors: [Color(0xFFF25B58), Color(0xFFF38E3B)],
-              ),
-            ),
+            color: const Color(0xFF46ae93),
             child: Container(
                 padding: const EdgeInsets.all(20.0),
                 child: Column(
@@ -30,21 +26,13 @@ class _HomeState extends State<Home> {
                     Container(
                       margin: EdgeInsets.only(
                           top: screenHeight * 0.05,
-                          bottom: screenHeight * 0.05),
-                      child: const Center(
-                        child: Text(
-                          'De Waaiburg VZW',
-                          style: TextStyle(
-                            color: Color(0xFFF3D015),
-                            shadows: [
-                              Shadow(
-                                  color: Colors.black45,
-                                  offset: Offset(0, 3),
-                                  blurRadius: 15)
-                            ],
-                            fontSize: 48,
-                            fontWeight: FontWeight.w900,
-                          ),
+                          bottom: screenHeight * 0.01),
+                      child: Center(
+                        child: SvgPicture.asset(
+                          'assets/WAAIBURG_DEFINITIEF_vector_RGB_Tekengebied 1-01.svg',
+                          color: Colors.white,
+                          semanticsLabel: 'Waaiburg Logo',
+                          height: 150,
                         ),
                       ),
                     ),
@@ -63,7 +51,7 @@ class _HomeState extends State<Home> {
                             HomeButton(
                               name: "JONGEREN",
                               icon: FontAwesomeIcons.child,
-                              iconColor: Color(0xFF319EC2),
+                              iconColor: Color(0xFF3855a2),
                               sectionId: 2,
                               route: "/infosegment",
                             ),
@@ -84,7 +72,7 @@ class _HomeState extends State<Home> {
                             HomeButton(
                               name: "WEBSITE",
                               icon: FontAwesomeIcons.globe,
-                              iconColor: Color(0xFF319EC2),
+                              iconColor: Color(0xFF3855a2),
                               sectionId: 1,
                               route: "https://www.dewaaiburg.be/",
                             ),

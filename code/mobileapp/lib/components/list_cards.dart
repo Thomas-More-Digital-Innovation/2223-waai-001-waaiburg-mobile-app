@@ -46,7 +46,7 @@ class ListCard extends StatelessWidget {
                 textAlign: TextAlign.center,
                 title,
                 style: const TextStyle(
-                  color: Color(0xFF319EC2),
+                  color: Color(0xFF3855a2),
                   fontSize: 24,
                   fontWeight: FontWeight.w600,
                 ),

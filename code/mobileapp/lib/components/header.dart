@@ -19,7 +19,7 @@ class Header extends StatelessWidget implements PreferredSizeWidget {
       leading: IconButton(
         icon: Icon(
           Icons.arrow_back_ios,
-          color: Color(titleColor ?? 0xFF319EC2),
+          color: Color(titleColor ?? 0xFF3855a2),
           weight: 0.9,
         ),
         iconSize: 35,
@@ -27,7 +27,7 @@ class Header extends StatelessWidget implements PreferredSizeWidget {
       ),
       titleTextStyle: TextStyle(
           fontWeight: FontWeight.w600,
-          color: Color(titleColor ?? 0xFF319EC2),
+          color: Color(titleColor ?? 0xFF3855a2),
           fontSize: 32),
     );
   }

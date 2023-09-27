@@ -64,12 +64,7 @@ class _NewsState extends State<News> {
         ),
       ),
       body: Container(
-        decoration: const BoxDecoration(
-          gradient: LinearGradient(
-            begin: Alignment.topLeft,
-            colors: [Color(0xFFF25B58), Color(0xFFF38E3B)],
-          ),
-        ),
+        color: const Color(0xFF46ae93),
         child: FutureBuilder<List<dynamic>>(
           future: futureNews,
           builder: (context, snapshot) {
@@ -98,10 +93,10 @@ class _NewsState extends State<News> {
   }
 
   static const List<Color> buttonColors = [
-    Color(0xFFF6B651),
-    Color(0xFFEB7B5C),
-    Color(0xFF319EC2),
-    Color(0xFF66B794),
+    Color(0xFFF9cc3e),
+    Color(0xFFb1b4dc),
+    Color(0xFF3855a2),
+    Color(0xFF46ae93),
   ];
 
   GestureDetector buildButtonColumn(
