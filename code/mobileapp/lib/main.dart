@@ -10,7 +10,7 @@ import 'package:mobileapp/pages/news.dart';
 void main() {
   runApp(MaterialApp(
     debugShowCheckedModeBanner: false,
-    theme: ThemeData(fontFamily: 'Poppins'),
+    theme: ThemeData(fontFamily: 'Epilogue'),
     initialRoute: "/home",
     routes: {
       '/infosegment': (context) => const InfoSegments(),
