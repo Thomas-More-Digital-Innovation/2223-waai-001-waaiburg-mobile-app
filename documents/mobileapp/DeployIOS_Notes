@@ -1,1 +1,15 @@
-njksnfjk
+-Op app store connect (developers omgeving apple online) nieuwe versie van app gemaakt.
+-Apple signed app doormiddel van in juiste developers team te zitten en juiste bundle_id te gebruiken. Dus deze ingesteld via xcode!
+-ook name, versie, icons, launchImage ingesteld via xcode
+
+-er waren zaken die buiten in xcode aangepast moest worden ook in de code zelf moesten worden aangepast.
+-ios/Podfile: min ios versie
+-AppFrameworkInfo.plist: Nakijken of changes van xcode zijn toegepast
+Er was een probleem dat de changes van xcode leken niet toegepast te worden dus ios map verwijderd en terug flutter app create waardoor de ios folder terug werd gecreate
+
+-Als dit allemaal gebeurd is daarna app builden:
+-flutter build ipa --obfuscate --split-debug-info=build/app/outputs/symbols 
+
+-Daarna "open build/ios/archive/MyApp.xcarchive" in Xcode om te valideren en deployen
+
+-Wanneer dit gebeurd is wordt het automatisch in review gebracht door apple en kun je al testen voor internal testers in testflight
