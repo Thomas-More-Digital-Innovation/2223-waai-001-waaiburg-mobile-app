@@ -1,3 +1,4 @@
+Docs: https://docs.flutter.dev/deployment/ios
 -Op app store connect (developers omgeving apple online) nieuwe versie van app gemaakt.
 -Apple signed app doormiddel van in juiste developers team te zitten en juiste bundle_id te gebruiken. Dus deze ingesteld via xcode!
 -ook name, versie, icons, launchImage ingesteld via xcode
