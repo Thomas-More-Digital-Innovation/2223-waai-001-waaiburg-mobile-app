@@ -1,0 +1,11 @@
+Docs: https://docs.flutter.dev/deployment/android
+-Android signed via een key. Het probleem was dus dat de andere jongens de key hadden waardoor ik nieuwe app heb moeten maken en geen update kon doen.
+-Je generate een key als je er nog geen hebt en vult de gegevens in android/key.properties (wachtwoord key zelfde als google play wachtwoord waaiburg)
+-Ook moet je een paar lijntjes code toevoegen voor signing in android/app/build.gradle
+-Dan in build.gradle in android.app alle zaken aanpassen zoals naam, id, ...
+
+Builden:
+-Run flutter build appbundle
+-(Running flutter build defaults to a release build.)
+
+-Op google play nieuwe release met nieuwe interne testers
