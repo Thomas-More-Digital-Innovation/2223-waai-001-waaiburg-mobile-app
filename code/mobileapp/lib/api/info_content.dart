@@ -4,7 +4,7 @@ import 'dart:async';
 
 Future<List<InfoContent>> fetchInfoContents() async {
   final response =
-      await http.get(Uri.parse('http://10.0.2.2:8000/api/infoContent'));
+      await http.get(Uri.parse('https://dewaaiburgapp.eu/api/infoContent'));
 
   if (response.statusCode == 200) {
     Iterable infoContents = jsonDecode(response.body)["infoContents"][0];
