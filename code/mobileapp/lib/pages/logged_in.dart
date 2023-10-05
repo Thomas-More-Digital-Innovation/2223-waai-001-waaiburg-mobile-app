@@ -2,8 +2,8 @@ import 'package:flutter/material.dart';
 
 import 'package:mobileapp/components/header.dart';
 
-class MyWidget extends StatelessWidget {
-  const MyWidget({super.key});
+class LoggedIn extends StatelessWidget {
+  const LoggedIn({super.key});
 
   @override
   Widget build(BuildContext context) {

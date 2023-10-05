@@ -26,6 +26,7 @@ class _MyWidgetState extends State<LoginPage> {
         var data = jsonDecode(response.body.toString());
         print(data['token']);
         print('Login successfully');
+        Navigator.pushNamed(context, '/loggedin');
       } else {
         print(response.statusCode);
         print(response.body);
