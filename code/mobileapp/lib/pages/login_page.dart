@@ -18,11 +18,9 @@ class _MyWidgetState extends State<LoginPage> {
 
   void login(String email, String password) async {
     try {
-      print(email);
-      print(password);
       Response response = await post(
           Uri.parse('https://dewaaiburgapp.eu/api/auth/login'),
-          body: {'email': email, 'password': password.hashCode});
+          body: {'email': email, 'password': password});
 
       if (response.statusCode == 200) {
         var data = jsonDecode(response.body.toString());
@@ -30,6 +28,7 @@ class _MyWidgetState extends State<LoginPage> {
         print('Login successfully');
       } else {
         print(response.statusCode);
+        print(response.body);
         print('failed');
       }
     } catch (e) {
