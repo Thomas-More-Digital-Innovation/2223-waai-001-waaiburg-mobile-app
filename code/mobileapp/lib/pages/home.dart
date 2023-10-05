@@ -25,7 +25,7 @@ class _HomeState extends State<Home> {
                   children: [
                     Container(
                       margin: EdgeInsets.only(
-                          top: screenHeight * 0.05,
+                          top: screenHeight * 0.01,
                           bottom: screenHeight * 0.01),
                       child: Center(
                         child: SvgPicture.asset(
@@ -43,7 +43,7 @@ class _HomeState extends State<Home> {
                         child: GridView.count(
                           crossAxisCount: 2,
                           mainAxisSpacing: 20,
-                          crossAxisSpacing: 20,
+                          crossAxisSpacing: 18,
                           childAspectRatio: 1,
                           primary: false,
                           shrinkWrap: false,
@@ -79,6 +79,36 @@ class _HomeState extends State<Home> {
                           ],
                         ),
                       ),
+                    ),
+                    SizedBox(
+                      width: screenHeight,
+                      child: GestureDetector(
+                          onTap: () {
+                            Navigator.pushNamed(context, '/login');
+                          },
+                          child: Container(
+                            margin: const EdgeInsets.all(5.0),
+                            padding: const EdgeInsets.all(18.0),
+                            decoration: BoxDecoration(
+                                color: Colors.white.withAlpha(64),
+                                borderRadius: const BorderRadius.all(
+                                    Radius.circular(30))),
+                            child: const Text(
+                              'Login',
+                              textAlign: TextAlign.center,
+                              style: TextStyle(
+                                  fontSize: 20,
+                                  fontWeight: FontWeight.w600,
+                                  color: Colors.white,
+                                  shadows: [
+                                    Shadow(
+                                      blurRadius: 5,
+                                      color: Colors.black45,
+                                      offset: Offset(0, 2),
+                                    )
+                                  ]),
+                            ),
+                          )),
                     ),
                   ],
                 ))));
