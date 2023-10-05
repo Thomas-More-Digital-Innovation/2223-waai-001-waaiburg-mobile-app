@@ -24,16 +24,12 @@ class _MyWidgetState extends State<LoginPage> {
 
       if (response.statusCode == 200) {
         var data = jsonDecode(response.body.toString());
-        print(data['token']);
-        print('Login successfully');
         Navigator.pushNamed(context, '/loggedin');
       } else {
-        print(response.statusCode);
-        print(response.body);
-        print('failed');
+        // TODO: show error
       }
     } catch (e) {
-      print(e.toString());
+      // TODO: show error
     }
   }
 
