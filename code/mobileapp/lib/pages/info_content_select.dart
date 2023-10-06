@@ -74,7 +74,7 @@ class _InfoContentSelectedState extends State<InfoContentSelected> {
                             decoration: const BoxDecoration(
                               borderRadius:
                                   BorderRadius.all(Radius.circular(10)),
-                              color: Colors.blueAccent,
+                              color: Color(0xFF3855a2),
                             ),
                             child: const Text('Meer Info',
                                 style: TextStyle(
