@@ -5,6 +5,7 @@ import 'package:http/http.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 
 import '../components/header.dart';
+import '../components/checkBox.dart';
 
 class LoginPage extends StatefulWidget {
   const LoginPage({super.key});
@@ -44,6 +45,8 @@ class _MyWidgetState extends State<LoginPage> {
       print(e);
     }
   }
+
+  void remember() {}
 
   @override
   Widget build(BuildContext context) {
@@ -105,7 +108,37 @@ class _MyWidgetState extends State<LoginPage> {
                     child: Text('Login'),
                   ),
                 ),
-              )
+              ),
+              const SizedBox(
+                height: 20,
+              ),
+              Row(
+                mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                children: [
+                  const Row(
+                    children: [
+                      CheckBoxButton(),
+                      Text(
+                        'Onthoud Mij',
+                        style: TextStyle(
+                            fontWeight: FontWeight.bold, color: Colors.black),
+                      ),
+                    ],
+                  ),
+                  Container(
+                    alignment: Alignment.centerRight,
+                    child: GestureDetector(
+                      onTap: () {},
+                      child: Text(
+                        'Wachtwoord vergeten?',
+                        style: TextStyle(
+                            fontWeight: FontWeight.bold,
+                            color: Colors.blue[700]),
+                      ),
+                    ),
+                  ),
+                ],
+              ),
             ],
           ),
         ),
