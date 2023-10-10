@@ -2,6 +2,7 @@ import 'dart:convert';
 
 import 'package:flutter/material.dart';
 import 'package:http/http.dart';
+import 'package:shared_preferences/shared_preferences.dart';
 
 import '../components/header.dart';
 
@@ -24,7 +25,12 @@ class _MyWidgetState extends State<LoginPage> {
 
       if (response.statusCode == 200) {
         var data = jsonDecode(response.body.toString());
-        Navigator.pushNamed(context, '/loggedin');
+
+        // Save the user token to shared preferences
+        SharedPreferences prefs = await SharedPreferences.getInstance();
+        prefs.setString('userToken', data['Token']);
+
+        Navigator.pushNamed(context, '/home');
       } else {
         // TODO: show error
       }
