@@ -10,9 +10,6 @@ Future<bool> isLoggedIn() async {
   return userToken != null;
 }
 
-void logOut() {
-}
-
 class Home extends StatefulWidget {
   const Home({super.key});
 
@@ -33,6 +30,18 @@ class _HomeState extends State<Home> {
     bool loggedIn = await isLoggedIn();
     setState(() {
       userLoggedIn = loggedIn;
+    });
+  }
+
+  void logOut() async {
+    SharedPreferences prefs = await SharedPreferences.getInstance();
+
+    // Remove the user token from SharedPreferences
+    prefs.remove('userToken');
+
+    // Update the userLoggedIn state to false
+    setState(() {
+      userLoggedIn = false;
     });
   }
 
@@ -118,8 +127,9 @@ class _HomeState extends State<Home> {
                       width: screenHeight,
                       child: GestureDetector(
                           onTap: () {
-                            userLoggedIn ?
-                            Navigator.pushNamed(context, '/login') : logOut();
+                            userLoggedIn
+                                ? logOut()
+                                : Navigator.pushNamed(context, '/login');
                           },
                           child: Container(
                             margin: const EdgeInsets.all(5.0),
