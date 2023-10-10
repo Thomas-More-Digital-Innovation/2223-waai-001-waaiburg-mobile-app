@@ -58,7 +58,7 @@ class _InfoContentSelectedState extends State<InfoContentSelected> {
                               .firstWhere((i) => i.id == arg['infoId'])
                               .content ??
                           '<h1>No content</h1>',
-                      onLinkTap: (url, _, __, ___) {
+                      onLinkTap: (url, attributes, element) {
                         launchUrl(Uri.parse(url ?? ''));
                       },
                     ),
