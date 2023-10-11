@@ -5,7 +5,6 @@ import 'package:http/http.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 
 import '../components/header.dart';
-import '../components/checkBox.dart';
 
 class LoginPage extends StatefulWidget {
   const LoginPage({super.key});
@@ -18,14 +17,6 @@ class _MyWidgetState extends State<LoginPage> {
   TextEditingController emailController = TextEditingController();
   TextEditingController passwordController = TextEditingController();
   bool failedLogin = false;
-  bool isChecked = false;
-
-  void updateCheckBoxState(bool newState) {
-    // Update the state of the checkbox in the parent
-    setState(() {
-      isChecked = newState;
-    });
-  }
 
   void login(String email, String password) async {
     try {
@@ -34,12 +25,9 @@ class _MyWidgetState extends State<LoginPage> {
           body: {'email': email, 'password': password});
       if (response.statusCode == 200) {
         var data = jsonDecode(response.body.toString());
-
-        if (isChecked) {
-          // Save the user token to shared preferences
-          SharedPreferences prefs = await SharedPreferences.getInstance();
-          prefs.setString('userToken', data['Token']);
-        }
+        // Save the user token to shared preferences
+        SharedPreferences prefs = await SharedPreferences.getInstance();
+        prefs.setString('userToken', data['Token']);
 
         Navigator.pushNamed(context, '/home');
       } else {
@@ -122,32 +110,16 @@ class _MyWidgetState extends State<LoginPage> {
               const SizedBox(
                 height: 20,
               ),
-              Row(
-                mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                children: [
-                  Row(
-                    children: [
-                      CheckBoxButton(updateState: updateCheckBoxState),
-                      const Text(
-                        'Onthoud Mij',
-                        style: TextStyle(
-                            fontWeight: FontWeight.bold, color: Colors.black),
-                      ),
-                    ],
+              Container(
+                alignment: Alignment.centerRight,
+                child: GestureDetector(
+                  onTap: () {},
+                  child: Text(
+                    'Wachtwoord vergeten?',
+                    style: TextStyle(
+                        fontWeight: FontWeight.bold, color: Colors.blue[700]),
                   ),
-                  Container(
-                    alignment: Alignment.centerRight,
-                    child: GestureDetector(
-                      onTap: () {},
-                      child: Text(
-                        'Wachtwoord vergeten?',
-                        style: TextStyle(
-                            fontWeight: FontWeight.bold,
-                            color: Colors.blue[700]),
-                      ),
-                    ),
-                  ),
-                ],
+                ),
               ),
             ],
           ),
