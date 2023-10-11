@@ -18,6 +18,14 @@ class _MyWidgetState extends State<LoginPage> {
   TextEditingController emailController = TextEditingController();
   TextEditingController passwordController = TextEditingController();
   bool failedLogin = false;
+  bool isChecked = false;
+
+  void updateCheckBoxState(bool newState) {
+    // Update the state of the checkbox in the parent
+    setState(() {
+      isChecked = newState;
+    });
+  }
 
   void login(String email, String password) async {
     try {
@@ -27,9 +35,11 @@ class _MyWidgetState extends State<LoginPage> {
       if (response.statusCode == 200) {
         var data = jsonDecode(response.body.toString());
 
-        // Save the user token to shared preferences
-        SharedPreferences prefs = await SharedPreferences.getInstance();
-        prefs.setString('userToken', data['Token']);
+        if (isChecked) {
+          // Save the user token to shared preferences
+          SharedPreferences prefs = await SharedPreferences.getInstance();
+          prefs.setString('userToken', data['Token']);
+        }
 
         Navigator.pushNamed(context, '/home');
       } else {
@@ -115,10 +125,10 @@ class _MyWidgetState extends State<LoginPage> {
               Row(
                 mainAxisAlignment: MainAxisAlignment.spaceBetween,
                 children: [
-                  const Row(
+                  Row(
                     children: [
-                      CheckBoxButton(),
-                      Text(
+                      CheckBoxButton(updateState: updateCheckBoxState),
+                      const Text(
                         'Onthoud Mij',
                         style: TextStyle(
                             fontWeight: FontWeight.bold, color: Colors.black),

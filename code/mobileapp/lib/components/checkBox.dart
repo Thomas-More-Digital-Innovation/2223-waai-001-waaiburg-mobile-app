@@ -1,7 +1,9 @@
 import 'package:flutter/material.dart';
 
 class CheckBoxButton extends StatefulWidget {
-  const CheckBoxButton({super.key});
+  final Function(bool) updateState; // Callback function
+
+  const CheckBoxButton({super.key, required this.updateState});
 
   @override
   State<CheckBoxButton> createState() => _CheckBoxButtonState();
@@ -32,6 +34,7 @@ class _CheckBoxButtonState extends State<CheckBoxButton> {
       onChanged: (bool? value) {
         setState(() {
           isChecked = value!;
+          widget.updateState(isChecked); // Call the callback function
         });
       },
     );
