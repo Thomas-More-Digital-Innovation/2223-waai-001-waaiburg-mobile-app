@@ -3,7 +3,6 @@ import 'package:mobileapp/api/info.dart';
 import 'package:mobileapp/api/info_content.dart';
 import 'package:mobileapp/api/section.dart';
 import 'package:flutter/material.dart';
-import 'package:mobileapp/components/list_buttons.dart';
 import 'package:mobileapp/components/header.dart';
 import 'package:mobileapp/components/list_cards.dart';
 
@@ -39,6 +38,7 @@ class _NewsState extends State<News> {
     futureSection = fetchSections();
     futureInfoContent = fetchInfoContents();
     futureNews = fetchNews(3);
+    print(futureNews);
   }
 
   @override

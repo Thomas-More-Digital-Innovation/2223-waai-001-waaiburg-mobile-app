@@ -116,7 +116,7 @@ class _HomeState extends State<Home> {
                                 icon: FontAwesomeIcons.tree,
                                 iconColor: Color(0xFF3855a2),
                                 sectionId: 1,
-                                route: "/levensboom",
+                                route: "/treehome",
                               ),
                             ],
                           ],
