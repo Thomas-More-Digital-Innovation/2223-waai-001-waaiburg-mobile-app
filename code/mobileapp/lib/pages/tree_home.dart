@@ -26,34 +26,16 @@ class TreeHome extends StatelessWidget {
             ),
           ),
           // Speech Bubble
-          Positioned(
-            bottom: 60, // Adjust the position as needed
-            right: 20, // Adjust the position as needed
-            child: Column(
-              crossAxisAlignment: CrossAxisAlignment.end,
-              children: [
-                Container(
-                  padding: const EdgeInsets.all(20),
-                  decoration: const BoxDecoration(
-                    color: Colors.white,
-                    shape: BoxShape.circle,
-                  ),
-                  child: const Text(
-                    'Hello!',
-                    style: TextStyle(
-                      fontSize: 16,
-                    ),
-                  ),
-                ),
-                SizedBox(
-                  width: 0,
-                  height: 0,
-                  child: CustomPaint(
-                    size: const Size(20, 20), // Size of the arrow
-                    painter: TriangleArrowPainter(Colors.white),
-                  ),
-                ),
-              ],
+          const Positioned(
+            top: 50, // Adjust the position as needed
+            left: 50, // Adjust the position as needed
+            child: ChatBubble(
+              message:
+                  'Hallo ik ben bryan en de waaiburg is hier super blij mee',
+              horizontalPadding: 40,
+              verticalPadding: 20,
+              backgroundColor: Colors.white,
+              textColor: Colors.black,
             ),
           ),
         ],
@@ -62,28 +44,76 @@ class TreeHome extends StatelessWidget {
   }
 }
 
-class TriangleArrowPainter extends CustomPainter {
-  final Color color;
+class ChatBubble extends StatelessWidget {
+  final String message;
+  final double horizontalPadding;
+  final double verticalPadding;
+  final Color backgroundColor;
+  final Color textColor;
+  final double maxWidth;
 
-  TriangleArrowPainter(this.color);
+  const ChatBubble({
+    Key? key,
+    required this.message,
+    this.horizontalPadding = 16.0,
+    this.verticalPadding = 8.0,
+    this.backgroundColor = Colors.blue,
+    this.textColor = Colors.white,
+    this.maxWidth = 200.0,
+  }) : super(key: key);
 
   @override
-  void paint(Canvas canvas, Size size) {
-    final paint = Paint()
-      ..color = color
-      ..style = PaintingStyle.fill;
+  Widget build(BuildContext context) {
+    return ClipPath(
+      clipper: BubbleClipper(),
+      child: Container(
+        padding: EdgeInsets.symmetric(
+          horizontal: horizontalPadding,
+          vertical: verticalPadding,
+        ),
+        decoration: BoxDecoration(
+          color: backgroundColor,
+        ),
+        child: Container(
+          constraints: BoxConstraints(maxWidth: maxWidth),
+          child: Align(
+            alignment: Alignment.centerLeft,
+            child: Text(
+              message,
+              style: TextStyle(color: textColor),
+              textAlign: TextAlign.justify,
+            ),
+          ),
+        ),
+      ),
+    );
+  }
+}
 
+class BubbleClipper extends CustomClipper<Path> {
+  @override
+  Path getClip(Size size) {
     final path = Path();
-    path.moveTo(0, size.height);
-    path.lineTo(size.width / 2, 0);
-    path.lineTo(size.width, size.height);
-    path.close();
 
-    canvas.drawPath(path, paint);
+    path.moveTo(size.width - 20, size.height);
+    path.quadraticBezierTo(
+        size.width, size.height, size.width, size.height - 20);
+
+    path.lineTo(size.width, 20);
+    path.quadraticBezierTo(size.width, 0, size.width - 20, 0);
+
+    path.lineTo(10, 0);
+    path.quadraticBezierTo(0, 0, 0, 20);
+
+    path.lineTo(0, size.height - 20);
+    path.quadraticBezierTo(0, size.height, 10, size.height);
+
+    path.close();
+    return path;
   }
 
   @override
-  bool shouldRepaint(CustomPainter oldDelegate) {
+  bool shouldReclip(CustomClipper<Path> oldClipper) {
     return false;
   }
 }
