@@ -13,7 +13,7 @@ void main() {
   runApp(MaterialApp(
     debugShowCheckedModeBanner: false,
     theme: ThemeData(fontFamily: 'Epilogue'),
-    initialRoute: "/treehome",
+    initialRoute: "/home",
     routes: {
       '/login': (context) => const LoginPage(),
       '/infosegment': (context) => const InfoSegments(),
