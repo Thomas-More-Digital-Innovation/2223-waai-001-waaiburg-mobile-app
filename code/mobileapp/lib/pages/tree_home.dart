@@ -1,9 +1,23 @@
 import 'package:flutter/material.dart';
+import 'package:mobileapp/api/question.dart';
 
-class TreeHome extends StatelessWidget {
+class TreeHome extends StatefulWidget {
   const TreeHome({Key? key}) : super(key: key);
 
   @override
+  State<TreeHome> createState() => _TreeHomeState();
+}
+
+class _TreeHomeState extends State<TreeHome> {
+  late Future<List<Question>> futureQuestions;
+
+  @override
+  void initState() {
+    super.initState();
+    futureQuestions = fetchQuestion();
+    print(futureQuestions);
+  }
+
   Widget build(BuildContext context) {
     return Scaffold(
       body: Stack(
