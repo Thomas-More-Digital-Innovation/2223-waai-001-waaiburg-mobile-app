@@ -52,6 +52,61 @@ class _TreeHomeState extends State<TreeHome> {
               textColor: Colors.black,
             ),
           ),
+          // Pijltje Links
+          Positioned(
+            bottom: -10, // Adjust the position as needed
+            left: 10, // Adjust the position as needed
+            child: IconButton(
+              icon: Transform.rotate(
+                angle: 45,
+                child: const Icon(
+                  Icons.play_arrow_rounded,
+                  color: Color(0xFF3855a2),
+                  weight: 0.9,
+                ),
+              ),
+              iconSize: 55,
+              onPressed: () => Navigator.of(context).pop(),
+            ),
+          ),
+          const SizedBox(
+            width: 5,
+          ),
+          // Antwoord
+          Positioned(
+            bottom: 0,
+            left: MediaQuery.of(context).size.width / 2 -
+                50, // Center Horizontally
+            right: null,
+            child: TextButton(
+              style: TextButton.styleFrom(
+                backgroundColor: const Color(0xFF3855a2),
+              ),
+              onPressed: (() => {}),
+              child: const Text(
+                'Antwoorden',
+                style:
+                    TextStyle(color: Colors.white, fontWeight: FontWeight.bold),
+              ),
+            ),
+          ),
+          const SizedBox(
+            width: 5,
+          ),
+          // Pijltje Rechts
+          Positioned(
+            bottom: -10, // Adjust the position as needed
+            right: 10, // Adjust the position as needed
+            child: IconButton(
+              icon: const Icon(
+                Icons.play_arrow_rounded,
+                color: Color(0xFF3855a2),
+                weight: 0.9,
+              ),
+              iconSize: 55,
+              onPressed: () => Navigator.of(context).pop(),
+            ),
+          ),
         ],
       ),
     );
