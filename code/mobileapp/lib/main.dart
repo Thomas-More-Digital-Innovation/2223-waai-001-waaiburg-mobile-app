@@ -5,6 +5,7 @@ import 'package:mobileapp/pages/info_content_select.dart';
 import 'package:mobileapp/pages/info_segments.dart';
 import 'package:mobileapp/pages/info_contents.dart';
 import 'package:mobileapp/pages/news.dart';
+import 'package:mobileapp/pages/tree_home.dart';
 
 /// The website screen
 /// This screen is a webview
@@ -20,6 +21,7 @@ void main() {
       '/infocontentselect': (context) => const InfoContentSelected(),
       '/home': (context) => const Home(),
       '/news': (context) => const News(),
+      '/treehome': (context) => const TreeHome(),
     },
   ));
 }
