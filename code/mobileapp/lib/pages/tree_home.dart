@@ -1,5 +1,5 @@
 import 'package:flutter/material.dart';
-import 'package:mobileapp/api/question.dart';
+import 'package:mobileapp/api/questionList.dart';
 
 class TreeHome extends StatefulWidget {
   const TreeHome({Key? key}) : super(key: key);
@@ -9,15 +9,15 @@ class TreeHome extends StatefulWidget {
 }
 
 class _TreeHomeState extends State<TreeHome> {
-  late Future<List<Question>> futureQuestions;
+  late Future<List<QuestionList>> futureQuestionLists;
 
   @override
   void initState() {
     super.initState();
-    futureQuestions = fetchQuestion();
-    print(futureQuestions);
+    futureQuestionLists = fetchQuestionList();
   }
 
+  @override
   Widget build(BuildContext context) {
     return Scaffold(
       body: Stack(
@@ -52,6 +52,32 @@ class _TreeHomeState extends State<TreeHome> {
               textColor: Colors.black,
             ),
           ),
+          Positioned(
+              top: 200, // Adjust the position as needed
+              left: 50, // Adjust the position as needed
+              child: FutureBuilder<List<QuestionList>>(
+                  future: futureQuestionLists,
+                  builder: ((context, snapshot) {
+                    if (snapshot.hasData &&
+                        snapshot.connectionState == ConnectionState.done) {
+                      return ListView(
+                        children:
+                            snapshot.data!.asMap().entries.map((questionList) {
+                          return ChatBubble(
+                            message: questionList.value.title,
+                            horizontalPadding: 40,
+                            verticalPadding: 20,
+                            backgroundColor: Colors.white,
+                            textColor: Colors.black,
+                          );
+                        }).toList(),
+                      );
+                    }
+                    // show a loading spinnersnapshot.data!.where((i) => i.sectionId == 1).toList());
+                    else {
+                      return const CircularProgressIndicator();
+                    }
+                  }))),
           // Pijltje Links
           Positioned(
             bottom: -10, // Adjust the position as needed
