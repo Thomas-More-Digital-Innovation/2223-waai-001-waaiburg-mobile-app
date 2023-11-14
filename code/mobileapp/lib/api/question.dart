@@ -5,7 +5,7 @@ import 'dart:async';
 Future<List<Question>> fetchQuestion() async {
   try {
     final response =
-        await http.get(Uri.parse('http://127.0.0.1:8000/api/questions'));
+        await http.get(Uri.parse('http://192.168.10.127:8000/api/questions'));
 
     if (response.statusCode == 200) {
       Iterable questions = jsonDecode(response.body)["questions"][0];
@@ -16,7 +16,6 @@ Future<List<Question>> fetchQuestion() async {
       throw Exception(response.reasonPhrase);
     }
   } catch (e) {
-    print("This is the error message");
     throw Exception(e);
   }
 }
