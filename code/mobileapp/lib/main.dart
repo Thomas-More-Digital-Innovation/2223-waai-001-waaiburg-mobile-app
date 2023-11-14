@@ -14,7 +14,7 @@ void main() {
   runApp(MaterialApp(
     debugShowCheckedModeBanner: false,
     theme: ThemeData(fontFamily: 'Epilogue'),
-    initialRoute: "/home",
+    initialRoute: "/testlottie",
     routes: {
       '/login': (context) => const LoginPage(),
       '/infosegment': (context) => const InfoSegments(),
