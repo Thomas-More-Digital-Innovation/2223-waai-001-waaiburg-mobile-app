@@ -1,5 +1,5 @@
 import 'package:flutter/material.dart';
-import 'package:mobileapp/api/questionList.dart';
+import 'package:mobileapp/api/question_list.dart';
 
 class TreeHome extends StatefulWidget {
   const TreeHome({Key? key}) : super(key: key);
@@ -27,22 +27,22 @@ class _TreeHomeState extends State<TreeHome> {
             'assets/tree.png',
             fit: BoxFit.cover,
             width: double.infinity,
-            height: double.infinity,
+            height: 800, // Adjust the height as needed
           ),
           // Character image (smaller and in front)
           Positioned(
-            bottom: 0, // Adjust the position as needed
-            right: -80, // Adjust the position as needed
+            bottom: 0,
+            right: -80,
             child: Image.asset(
               'assets/character.png',
-              width: 400, // Adjust the size as needed
-              height: 500, // Adjust the size as needed
+              width: 400,
+              height: 500,
             ),
           ),
           // Speech Bubble
           const Positioned(
-            top: 50, // Adjust the position as needed
-            left: 50, // Adjust the position as needed
+            top: 50,
+            left: 50,
             child: ChatBubble(
               message:
                   'Hallo ik ben bryan en de waaiburg is hier super blij mee',
@@ -53,35 +53,36 @@ class _TreeHomeState extends State<TreeHome> {
             ),
           ),
           Positioned(
-              top: 200, // Adjust the position as needed
-              left: 50, // Adjust the position as needed
-              child: FutureBuilder<List<QuestionList>>(
-                  future: futureQuestionLists,
-                  builder: ((context, snapshot) {
-                    if (snapshot.hasData &&
-                        snapshot.connectionState == ConnectionState.done) {
-                      return ListView(
-                        children:
-                            snapshot.data!.asMap().entries.map((questionList) {
-                          return ChatBubble(
-                            message: questionList.value.title,
-                            horizontalPadding: 40,
-                            verticalPadding: 20,
-                            backgroundColor: Colors.white,
-                            textColor: Colors.black,
-                          );
-                        }).toList(),
-                      );
-                    }
-                    // show a loading spinnersnapshot.data!.where((i) => i.sectionId == 1).toList());
-                    else {
-                      return const CircularProgressIndicator();
-                    }
-                  }))),
+            top: 200,
+            left: 50,
+            child: FutureBuilder<List<QuestionList>>(
+              future: futureQuestionLists,
+              builder: (context, snapshot) {
+                if (snapshot.hasData &&
+                    snapshot.connectionState == ConnectionState.done) {
+                  return Column(
+                    mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                    mainAxisSize: MainAxisSize.max,
+                    children: snapshot.data!
+                        .map((questionList) => ChatBubble(
+                              message: questionList.title,
+                              horizontalPadding: 40,
+                              verticalPadding: 20,
+                              backgroundColor: Colors.white,
+                              textColor: Colors.black,
+                            ))
+                        .toList(),
+                  );
+                } else {
+                  return const CircularProgressIndicator();
+                }
+              },
+            ),
+          ),
           // Pijltje Links
           Positioned(
-            bottom: -10, // Adjust the position as needed
-            left: 10, // Adjust the position as needed
+            bottom: -10,
+            left: 10,
             child: IconButton(
               icon: Transform.rotate(
                 angle: 45,
