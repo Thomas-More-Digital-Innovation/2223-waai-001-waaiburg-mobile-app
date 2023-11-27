@@ -3,23 +3,43 @@ import 'dart:convert';
 
 import 'package:shared_preferences/shared_preferences.dart';
 
-Future<List<QuestionList>> fetchQuestionList() async {
+Future<Map<Question, Answer>> fetchQuestionList() async {
   const String apiUrl = 'https://dewaaiburgapp.eu/api/activeList'; // API URL
-
   SharedPreferences prefs = await SharedPreferences.getInstance();
   final token = prefs.get('userToken');
 
-  print('Token');
-  print(token);
+  List<dynamic> questionAnswerList = [];
+
   try {
     final response = await http
         .get(Uri.parse(apiUrl), headers: {'Authorization': 'Bearer $token'});
 
     if (response.statusCode == 200) {
-      List<dynamic> data = jsonDecode(response.body)['questionLists'][0];
-      List<QuestionList> questionListsList =
-          data.map((model) => QuestionList.fromJson(model)).toList();
-      return questionListsList;
+      // Fetch the activeList ID
+      Iterable activeLists = jsonDecode(response.body)['question_list_ids'][0];
+      // Fetch the questions
+      Iterable questions = jsonDecode(response.body)['questions'][0];
+      // Fetch the answers
+      Iterable answers = jsonDecode(response.body)['answers'][0];
+
+      // Convert the json data to usable lists
+      // List<dynamic> activeListsList = activeLists.toList();
+      // questionAnswerList += activeListsList;
+
+      List<Question> questionsList =
+          questions.map((model) => Question.fromJson(model)).toList();
+      questionAnswerList += [questionsList];
+
+      List<Answer> answersList =
+          answers.map((model) => Answer.fromJson(model)).toList();
+      questionAnswerList += [answersList];
+
+      final questionAnswerMap = <Question, Answer>{};
+      questionAnswerList
+          .map((pair) => questionAnswerMap.putIfAbsent(pair[0], pair[1]));
+      print(questionAnswerMap);
+
+      return questionAnswerMap;
     } else {
       print("Request failed with status: ${response.statusCode}");
       throw Exception('Failed to load data');
@@ -43,6 +63,49 @@ class QuestionList {
     return QuestionList(
       id: json['id'],
       title: json['title'],
+    );
+  }
+}
+
+class Question {
+  final int id;
+  final int questionListId;
+  final int treePartId;
+  final String content;
+
+  const Question({
+    required this.id,
+    required this.questionListId,
+    required this.treePartId,
+    required this.content,
+  });
+
+  factory Question.fromJson(Map<String, dynamic> json) {
+    return Question(
+      id: json['id'],
+      questionListId: json['question_list_id'],
+      treePartId: json['tree_part_id'],
+      content: json['content'],
+    );
+  }
+}
+
+class Answer {
+  final int id;
+  final int questionId;
+  final String answer;
+
+  const Answer({
+    required this.id,
+    required this.questionId,
+    required this.answer,
+  });
+
+  factory Answer.fromJson(Map<String, dynamic> json) {
+    return Answer(
+      id: json['id'],
+      questionId: json['question_id'],
+      answer: json['answer'],
     );
   }
 }

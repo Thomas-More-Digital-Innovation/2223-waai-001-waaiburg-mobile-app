@@ -9,12 +9,17 @@ class TreeHome extends StatefulWidget {
 }
 
 class _TreeHomeState extends State<TreeHome> {
-  late Future<List<QuestionList>> futureQuestionLists;
+  late Future<Map<Question, Answer>> futureQuestionAnswerList;
+  // late Future<List<dynamic>> futureQuestionList;
+  // late Future<List<Answer>> futureAnswerList;
 
   @override
   void initState() {
     super.initState();
-    futureQuestionLists = fetchQuestionList();
+    futureQuestionAnswerList = fetchQuestionList();
+    // futureQuestionList = futureQuestionAnswerList.asStream().elementAt(0)
+    //     as Future<List<Question>>;
+    // print(futureQuestionList);
   }
 
   @override
@@ -55,24 +60,19 @@ class _TreeHomeState extends State<TreeHome> {
           Positioned(
             top: 200,
             left: 50,
-            child: FutureBuilder<List<QuestionList>>(
-              future: futureQuestionLists,
+            child: FutureBuilder<Map<Question, Answer>>(
+              future: futureQuestionAnswerList,
               builder: (context, snapshot) {
                 if (snapshot.hasData &&
                     snapshot.connectionState == ConnectionState.done) {
                   return Column(
-                    mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                    mainAxisSize: MainAxisSize.max,
-                    children: snapshot.data!
-                        .map((questionList) => ChatBubble(
-                              message: questionList.title,
-                              horizontalPadding: 40,
-                              verticalPadding: 20,
-                              backgroundColor: Colors.white,
-                              textColor: Colors.black,
-                            ))
-                        .toList(),
-                  );
+                      mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                      mainAxisSize: MainAxisSize.max,
+                      children: [
+                        Text(snapshot.data!.isEmpty
+                            ? "Het is Leeg"
+                            : "Het is Vol"),
+                      ]);
                 } else {
                   return const CircularProgressIndicator();
                 }
