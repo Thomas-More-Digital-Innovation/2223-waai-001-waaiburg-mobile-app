@@ -9,18 +9,36 @@ class TreeHome extends StatefulWidget {
 }
 
 class _TreeHomeState extends State<TreeHome> {
-  late Future<Map<Question, Answer>> futureQuestionAnswerList;
-  // late Future<List<dynamic>> futureQuestionList;
-  // late Future<List<Answer>> futureAnswerList;
+  late Future<List<dynamic>> futureQuestionAnswerList;
 
-  @override
-  void initState() {
-    super.initState();
-    futureQuestionAnswerList = fetchQuestionList();
-    // futureQuestionList = futureQuestionAnswerList.asStream().elementAt(0)
-    //     as Future<List<Question>>;
-    // print(futureQuestionList);
+@override
+void initState() {
+  super.initState();
+  _initializeData();
+}
+
+Future<void> _initializeData() async {
+  futureQuestionAnswerList = fetchQuestionList();
+
+  // Using `await` to wait for the future to complete before accessing its value
+  List<dynamic> questionAnswerList = await futureQuestionAnswerList;
+
+  // Now you can access the elements of the list
+  List<Question> questionsList = questionAnswerList[0];
+  List<Answer> answersList = questionAnswerList[1];
+
+  // Print the actual values
+  print("Questions:");
+  for (Question question in questionsList) {
+    print(question.content); // Replace with the actual property
   }
+
+  print("Answers:");
+  for (Answer answer in answersList) {
+    print(answer.answer); // Replace with the actual property
+  }
+}
+
 
   @override
   Widget build(BuildContext context) {
@@ -60,7 +78,7 @@ class _TreeHomeState extends State<TreeHome> {
           Positioned(
             top: 200,
             left: 50,
-            child: FutureBuilder<Map<Question, Answer>>(
+            child: FutureBuilder<List>(
               future: futureQuestionAnswerList,
               builder: (context, snapshot) {
                 if (snapshot.hasData &&

@@ -3,7 +3,7 @@ import 'dart:convert';
 
 import 'package:shared_preferences/shared_preferences.dart';
 
-Future<Map<Question, Answer>> fetchQuestionList() async {
+Future<List<dynamic>> fetchQuestionList() async {
   const String apiUrl = 'https://dewaaiburgapp.eu/api/activeList'; // API URL
   SharedPreferences prefs = await SharedPreferences.getInstance();
   final token = prefs.get('userToken');
@@ -11,8 +11,7 @@ Future<Map<Question, Answer>> fetchQuestionList() async {
   List<dynamic> questionAnswerList = [];
 
   try {
-    final response = await http
-        .get(Uri.parse(apiUrl), headers: {'Authorization': 'Bearer $token'});
+    final response = await http.get(Uri.parse(apiUrl), headers: {'Authorization': 'Bearer $token'});
 
     if (response.statusCode == 200) {
       // Fetch the activeList ID
@@ -21,10 +20,6 @@ Future<Map<Question, Answer>> fetchQuestionList() async {
       Iterable questions = jsonDecode(response.body)['questions'][0];
       // Fetch the answers
       Iterable answers = jsonDecode(response.body)['answers'][0];
-
-      // Convert the json data to usable lists
-      // List<dynamic> activeListsList = activeLists.toList();
-      // questionAnswerList += activeListsList;
 
       List<Question> questionsList =
           questions.map((model) => Question.fromJson(model)).toList();
@@ -39,7 +34,7 @@ Future<Map<Question, Answer>> fetchQuestionList() async {
           .map((pair) => questionAnswerMap.putIfAbsent(pair[0], pair[1]));
       print(questionAnswerMap);
 
-      return questionAnswerMap;
+      return Future.value([questionsList, answersList]);
     } else {
       print("Request failed with status: ${response.statusCode}");
       throw Exception('Failed to load data');
@@ -49,6 +44,7 @@ Future<Map<Question, Answer>> fetchQuestionList() async {
     throw Exception('Failed to load data');
   }
 }
+
 
 class QuestionList {
   final int id;
