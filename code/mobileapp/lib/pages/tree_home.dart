@@ -83,6 +83,10 @@ class _TreeHomeState extends State<TreeHome> {
     return null;
   }
 
+  void updateAnswer(String newAnswer) {
+    print(newAnswer);
+  }
+
   @override
   Widget build(BuildContext context) {
     return Scaffold(
@@ -261,8 +265,8 @@ class ChatBubble extends StatelessWidget {
 }
 
 class InputBubble extends StatefulWidget {
-  final String? answer;
-  const InputBubble({Key? key, this.answer}) : super(key: key);
+  late String? answer;
+  InputBubble({Key? key, this.answer}) : super(key: key);
 
   @override
   _InputBubbleState createState() => _InputBubbleState();
@@ -279,8 +283,6 @@ class _InputBubbleState extends State<InputBubble> {
     }
   }
 
-  void _updateAnswer(String text) {}
-
   @override
   Widget build(BuildContext context) {
     return LayoutBuilder(
@@ -292,7 +294,7 @@ class _InputBubbleState extends State<InputBubble> {
             clipper: BubbleClipper(),
             child: Container(
               color: Colors.white,
-              padding: EdgeInsets.all(8.0),
+              padding: const EdgeInsets.all(8.0),
               child: Row(
                 children: [
                   Expanded(
@@ -307,11 +309,8 @@ class _InputBubbleState extends State<InputBubble> {
                     icon: const Icon(Icons.send),
                     onPressed: () {
                       // Handle sending the message
-                      _updateAnswer(_textController.text);
+                      
                       print("Sending message: ${_textController.text}");
-                      // You may want to update the state or send the message to your backend
-                      // Here, we'll just clear the text field
-                      _textController.clear();
                     },
                   ),
                 ],
