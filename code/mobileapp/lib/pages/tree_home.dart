@@ -31,17 +31,24 @@ class _TreeHomeState extends State<TreeHome> {
     List<Answer> answersList = questionAnswerList[1];
 
     // Print the actual values
-    // print("Questions:");
-    // for (Question question in questionsList) {
-    //   print(question.content); // Replace with the actual property
-    // }
+    print("Questions:");
+    for (Question question in questionsList!) {
+      print(question.content); // Replace with the actual property
+    }
 
-    // print("Answers:");
-    // for (Answer answer in answersList) {
-    //   print(answer.answer); // Replace with the actual property
-    // }
+    print("Answers:");
+    for (Answer answer in answersList) {
+      print(answer.answer); // Replace with the actual property
+    }
 
-    setState(() {}); // Trigger a rebuild after fetching data
+    // Find the index of the first unanswered question
+    int indexOfFirstUnansweredQuestion = questionsList!.indexWhere(
+        (question) => answersList.every((answer) => answer.questionId != question.id));
+
+    // Set currentQuestionIndex to the found index, or 0 if no unanswered questions are found
+    setState(() {
+      currentQuestionIndex = indexOfFirstUnansweredQuestion >= 0 ? indexOfFirstUnansweredQuestion : 0;
+    });
   }
 
   void _goToPreviousQuestion() {
