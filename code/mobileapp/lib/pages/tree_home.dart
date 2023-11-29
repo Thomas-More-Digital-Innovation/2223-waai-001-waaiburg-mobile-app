@@ -11,7 +11,7 @@ class TreeHome extends StatefulWidget {
 class _TreeHomeState extends State<TreeHome> {
   late Future<List<dynamic>> futureQuestionAnswerList;
 
-  late List<Question> questionsList;
+  List<Question>? questionsList;
   int currentQuestionIndex = 0;
 
   @override
@@ -31,15 +31,15 @@ class _TreeHomeState extends State<TreeHome> {
     List<Answer> answersList = questionAnswerList[1];
 
     // Print the actual values
-    print("Questions:");
-    for (Question question in questionsList) {
-      print(question.content); // Replace with the actual property
-    }
+    // print("Questions:");
+    // for (Question question in questionsList) {
+    //   print(question.content); // Replace with the actual property
+    // }
 
-    print("Answers:");
-    for (Answer answer in answersList) {
-      print(answer.answer); // Replace with the actual property
-    }
+    // print("Answers:");
+    // for (Answer answer in answersList) {
+    //   print(answer.answer); // Replace with the actual property
+    // }
 
     setState(() {}); // Trigger a rebuild after fetching data
   }
@@ -53,7 +53,7 @@ class _TreeHomeState extends State<TreeHome> {
   }
 
   void _goToNextQuestion() {
-    if (currentQuestionIndex < questionsList.length - 1) {
+    if (questionsList != null && currentQuestionIndex < questionsList!.length - 1) {
       setState(() {
         currentQuestionIndex++;
       });
@@ -82,19 +82,34 @@ class _TreeHomeState extends State<TreeHome> {
               height: 500,
             ),
           ),
+          Positioned(
+            top: 20,
+            left: 10,
+            child: IconButton(
+              icon: const Icon(
+                Icons.home_rounded,
+                color: Color(0xFF3855a2),
+                weight: 0.9,
+              ),
+              iconSize: 55,
+              onPressed: () => Navigator.of(context).pop(),
+            ),
+          ),
           // Speech Bubble
           Positioned(
-            top: 50,
+            top: 100,
             left: 50,
-            child: ChatBubble(
-              message: questionsList.isEmpty
-                  ? "Geen vragen gevonden"
-                  : questionsList[currentQuestionIndex].content,
-              horizontalPadding: 40,
-              verticalPadding: 20,
-              backgroundColor: Colors.white,
-              textColor: Colors.black,
-            ),
+            child: questionsList == null
+                ? const CircularProgressIndicator()
+                : questionsList!.isEmpty
+                    ? const Text("No questions available")
+                    : ChatBubble(
+                        message: questionsList![currentQuestionIndex].content,
+                        horizontalPadding: 40,
+                        verticalPadding: 20,
+                        backgroundColor: Colors.white,
+                        textColor: Colors.black,
+                      ),
           ),
           // Pijltje Links
           Positioned(
