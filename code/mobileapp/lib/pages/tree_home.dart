@@ -15,7 +15,7 @@ class _TreeHomeState extends State<TreeHome> {
   List<Answer>? answersList;
   int currentQuestionIndex = 0;
   bool isInputVisible = false;
-  String? answer;
+  String? answerText;
 
   @override
   void initState() {
@@ -49,8 +49,8 @@ class _TreeHomeState extends State<TreeHome> {
     if (currentQuestionIndex > 0) {
       setState(() {
         currentQuestionIndex--;
-        answer = _getAnswerValue();
         isInputVisible = false;
+        answerText = _getAnswerValue(currentQuestionIndex);
       });
     }
   }
@@ -60,24 +60,27 @@ class _TreeHomeState extends State<TreeHome> {
         currentQuestionIndex < questionsList!.length - 1) {
       setState(() {
         currentQuestionIndex++;
-        answer = _getAnswerValue();
         isInputVisible = false;
+        answerText = _getAnswerValue(currentQuestionIndex);
       });
     }
   }
 
-  String? _getAnswerValue() {
-    if (currentQuestionIndex >= 0 &&
-        currentQuestionIndex < questionsList!.length) {
+  String? _getAnswerValue(int questionIndex) {
+    if (questionIndex >= 0 && questionIndex < questionsList!.length) {
       final currentQuestionId = questionsList![currentQuestionIndex].id;
 
-      final answer = answersList!.firstWhere(
-        (answer) => answer.questionId == currentQuestionId,
-      );
+      try {
+        final answer = answersList!.firstWhere(
+          (answer) => answer.questionId == currentQuestionId,
+        );
 
-      return answer.answer;
+        return answer.answer;
+      } catch (e) {
+        return null;
+      }
     }
-    return "";
+    return null;
   }
 
   @override
@@ -139,7 +142,7 @@ class _TreeHomeState extends State<TreeHome> {
               bottom: 80, // Adjust the position as needed
               left: MediaQuery.of(context).size.width / 2 - 150,
               child: InputBubble(
-                answer: answer,
+                answer: answerText,
               ),
             ),
           // Pijltje Links
@@ -276,6 +279,8 @@ class _InputBubbleState extends State<InputBubble> {
     }
   }
 
+  void _updateAnswer(String text) {}
+
   @override
   Widget build(BuildContext context) {
     return LayoutBuilder(
@@ -293,15 +298,16 @@ class _InputBubbleState extends State<InputBubble> {
                   Expanded(
                     child: TextField(
                       controller: _textController,
-                      decoration: InputDecoration.collapsed(
+                      decoration: const InputDecoration.collapsed(
                         hintText: 'Typ je antwoord...',
                       ),
                     ),
                   ),
                   IconButton(
-                    icon: Icon(Icons.send),
+                    icon: const Icon(Icons.send),
                     onPressed: () {
                       // Handle sending the message
+                      _updateAnswer(_textController.text);
                       print("Sending message: ${_textController.text}");
                       // You may want to update the state or send the message to your backend
                       // Here, we'll just clear the text field
