@@ -11,34 +11,54 @@ class TreeHome extends StatefulWidget {
 class _TreeHomeState extends State<TreeHome> {
   late Future<List<dynamic>> futureQuestionAnswerList;
 
-@override
-void initState() {
-  super.initState();
-  _initializeData();
-}
+  late List<Question> questionsList;
+  int currentQuestionIndex = 0;
 
-Future<void> _initializeData() async {
-  futureQuestionAnswerList = fetchQuestionList();
-
-  // Using `await` to wait for the future to complete before accessing its value
-  List<dynamic> questionAnswerList = await futureQuestionAnswerList;
-
-  // Now you can access the elements of the list
-  List<Question> questionsList = questionAnswerList[0];
-  List<Answer> answersList = questionAnswerList[1];
-
-  // Print the actual values
-  print("Questions:");
-  for (Question question in questionsList) {
-    print(question.content); // Replace with the actual property
+  @override
+  void initState() {
+    super.initState();
+    _initializeData();
   }
 
-  print("Answers:");
-  for (Answer answer in answersList) {
-    print(answer.answer); // Replace with the actual property
-  }
-}
+  Future<void> _initializeData() async {
+    futureQuestionAnswerList = fetchQuestionList();
 
+    // Using `await` to wait for the future to complete before accessing its value
+    List<dynamic> questionAnswerList = await futureQuestionAnswerList;
+
+    // Now you can access the elements of the list
+    questionsList = questionAnswerList[0];
+    List<Answer> answersList = questionAnswerList[1];
+
+    // Print the actual values
+    print("Questions:");
+    for (Question question in questionsList) {
+      print(question.content); // Replace with the actual property
+    }
+
+    print("Answers:");
+    for (Answer answer in answersList) {
+      print(answer.answer); // Replace with the actual property
+    }
+
+    setState(() {}); // Trigger a rebuild after fetching data
+  }
+
+  void _goToPreviousQuestion() {
+    if (currentQuestionIndex > 0) {
+      setState(() {
+        currentQuestionIndex--;
+      });
+    }
+  }
+
+  void _goToNextQuestion() {
+    if (currentQuestionIndex < questionsList.length - 1) {
+      setState(() {
+        currentQuestionIndex++;
+      });
+    }
+  }
 
   @override
   Widget build(BuildContext context) {
@@ -63,38 +83,17 @@ Future<void> _initializeData() async {
             ),
           ),
           // Speech Bubble
-          const Positioned(
+          Positioned(
             top: 50,
             left: 50,
             child: ChatBubble(
-              message:
-                  'Hallo ik ben bryan en de waaiburg is hier super blij mee',
+              message: questionsList.isEmpty
+                  ? "Geen vragen gevonden"
+                  : questionsList[currentQuestionIndex].content,
               horizontalPadding: 40,
               verticalPadding: 20,
               backgroundColor: Colors.white,
               textColor: Colors.black,
-            ),
-          ),
-          Positioned(
-            top: 200,
-            left: 50,
-            child: FutureBuilder<List>(
-              future: futureQuestionAnswerList,
-              builder: (context, snapshot) {
-                if (snapshot.hasData &&
-                    snapshot.connectionState == ConnectionState.done) {
-                  return Column(
-                      mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                      mainAxisSize: MainAxisSize.max,
-                      children: [
-                        Text(snapshot.data!.isEmpty
-                            ? "Het is Leeg"
-                            : "Het is Vol"),
-                      ]);
-                } else {
-                  return const CircularProgressIndicator();
-                }
-              },
             ),
           ),
           // Pijltje Links
@@ -111,7 +110,7 @@ Future<void> _initializeData() async {
                 ),
               ),
               iconSize: 55,
-              onPressed: () => Navigator.of(context).pop(),
+              onPressed: _goToPreviousQuestion,
             ),
           ),
           const SizedBox(
@@ -149,7 +148,7 @@ Future<void> _initializeData() async {
                 weight: 0.9,
               ),
               iconSize: 55,
-              onPressed: () => Navigator.of(context).pop(),
+              onPressed: _goToNextQuestion,
             ),
           ),
         ],
