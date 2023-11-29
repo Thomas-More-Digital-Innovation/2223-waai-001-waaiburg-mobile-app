@@ -42,12 +42,14 @@ class _TreeHomeState extends State<TreeHome> {
     }
 
     // Find the index of the first unanswered question
-    int indexOfFirstUnansweredQuestion = questionsList!.indexWhere(
-        (question) => answersList.every((answer) => answer.questionId != question.id));
+    int indexOfFirstUnansweredQuestion = questionsList!.indexWhere((question) =>
+        answersList.every((answer) => answer.questionId != question.id));
 
     // Set currentQuestionIndex to the found index, or 0 if no unanswered questions are found
     setState(() {
-      currentQuestionIndex = indexOfFirstUnansweredQuestion >= 0 ? indexOfFirstUnansweredQuestion : 0;
+      currentQuestionIndex = indexOfFirstUnansweredQuestion >= 0
+          ? indexOfFirstUnansweredQuestion
+          : 0;
     });
   }
 
@@ -60,12 +62,15 @@ class _TreeHomeState extends State<TreeHome> {
   }
 
   void _goToNextQuestion() {
-    if (questionsList != null && currentQuestionIndex < questionsList!.length - 1) {
+    if (questionsList != null &&
+        currentQuestionIndex < questionsList!.length - 1) {
       setState(() {
         currentQuestionIndex++;
       });
     }
   }
+
+  bool isInputVisible = false;
 
   @override
   Widget build(BuildContext context) {
@@ -118,6 +123,13 @@ class _TreeHomeState extends State<TreeHome> {
                         textColor: Colors.black,
                       ),
           ),
+          // Input bubble
+          if (isInputVisible)
+            Positioned(
+              bottom: 80, // Adjust the position as needed
+              left: MediaQuery.of(context).size.width / 2 - 150,
+              child: const InputBubble(),
+            ),
           // Pijltje Links
           Positioned(
             bottom: -10,
@@ -148,7 +160,11 @@ class _TreeHomeState extends State<TreeHome> {
               style: TextButton.styleFrom(
                 backgroundColor: const Color(0xFF3855a2),
               ),
-              onPressed: (() => {}),
+              onPressed: () {
+                setState(() {
+                  isInputVisible = true;
+                });
+              },
               child: const Text(
                 'Antwoorden',
                 style:
@@ -221,6 +237,58 @@ class ChatBubble extends StatelessWidget {
           ),
         ),
       ),
+    );
+  }
+}
+
+class InputBubble extends StatefulWidget {
+  const InputBubble({Key? key}) : super(key: key);
+
+  @override
+  _InputBubbleState createState() => _InputBubbleState();
+}
+
+class _InputBubbleState extends State<InputBubble> {
+  TextEditingController _textController = TextEditingController();
+
+  @override
+  Widget build(BuildContext context) {
+    return LayoutBuilder(
+      builder: (context, constraints) {
+        return SizedBox(
+          width: 300,
+          height: 50,
+          child: ClipPath(
+            clipper: BubbleClipper(),
+            child: Container(
+              color: Colors.white,
+              padding: EdgeInsets.all(8.0),
+              child: Row(
+                children: [
+                  Expanded(
+                    child: TextField(
+                      controller: _textController,
+                      decoration: InputDecoration.collapsed(
+                        hintText: 'Typ je antwoord...',
+                      ),
+                    ),
+                  ),
+                  IconButton(
+                    icon: Icon(Icons.send),
+                    onPressed: () {
+                      // Handle sending the message
+                      print("Sending message: ${_textController.text}");
+                      // You may want to update the state or send the message to your backend
+                      // Here, we'll just clear the text field
+                      _textController.clear();
+                    },
+                  ),
+                ],
+              ),
+            ),
+          ),
+        );
+      },
     );
   }
 }
