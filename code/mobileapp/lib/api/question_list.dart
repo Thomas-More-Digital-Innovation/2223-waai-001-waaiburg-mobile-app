@@ -8,8 +8,6 @@ Future<List<dynamic>> fetchQuestionList() async {
   SharedPreferences prefs = await SharedPreferences.getInstance();
   final token = prefs.get('userToken');
 
-  List<dynamic> questionAnswerList = [];
-
   try {
     final response = await http.get(Uri.parse(apiUrl), headers: {'Authorization': 'Bearer $token'});
 
@@ -23,16 +21,9 @@ Future<List<dynamic>> fetchQuestionList() async {
 
       List<Question> questionsList =
           questions.map((model) => Question.fromJson(model)).toList();
-      questionAnswerList += [questionsList];
 
       List<Answer> answersList =
           answers.map((model) => Answer.fromJson(model)).toList();
-      questionAnswerList += [answersList];
-
-      final questionAnswerMap = <Question, Answer>{};
-      questionAnswerList
-          .map((pair) => questionAnswerMap.putIfAbsent(pair[0], pair[1]));
-      print(questionAnswerMap);
 
       return Future.value([questionsList, answersList]);
     } else {

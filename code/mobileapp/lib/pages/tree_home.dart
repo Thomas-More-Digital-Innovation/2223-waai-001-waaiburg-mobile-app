@@ -12,7 +12,10 @@ class _TreeHomeState extends State<TreeHome> {
   late Future<List<dynamic>> futureQuestionAnswerList;
 
   List<Question>? questionsList;
+  List<Answer>? answersList;
   int currentQuestionIndex = 0;
+  bool isInputVisible = false;
+  String? answer;
 
   @override
   void initState() {
@@ -28,22 +31,11 @@ class _TreeHomeState extends State<TreeHome> {
 
     // Now you can access the elements of the list
     questionsList = questionAnswerList[0];
-    List<Answer> answersList = questionAnswerList[1];
-
-    // Print the actual values
-    print("Questions:");
-    for (Question question in questionsList!) {
-      print(question.content); // Replace with the actual property
-    }
-
-    print("Answers:");
-    for (Answer answer in answersList) {
-      print(answer.answer); // Replace with the actual property
-    }
+    answersList = questionAnswerList[1];
 
     // Find the index of the first unanswered question
     int indexOfFirstUnansweredQuestion = questionsList!.indexWhere((question) =>
-        answersList.every((answer) => answer.questionId != question.id));
+        answersList!.every((answer) => answer.questionId != question.id));
 
     // Set currentQuestionIndex to the found index, or 0 if no unanswered questions are found
     setState(() {
@@ -57,6 +49,8 @@ class _TreeHomeState extends State<TreeHome> {
     if (currentQuestionIndex > 0) {
       setState(() {
         currentQuestionIndex--;
+        answer = _getAnswerValue();
+        isInputVisible = false;
       });
     }
   }
@@ -66,11 +60,25 @@ class _TreeHomeState extends State<TreeHome> {
         currentQuestionIndex < questionsList!.length - 1) {
       setState(() {
         currentQuestionIndex++;
+        answer = _getAnswerValue();
+        isInputVisible = false;
       });
     }
   }
 
-  bool isInputVisible = false;
+  String? _getAnswerValue() {
+    if (currentQuestionIndex >= 0 &&
+        currentQuestionIndex < questionsList!.length) {
+      final currentQuestionId = questionsList![currentQuestionIndex].id;
+
+      final answer = answersList!.firstWhere(
+        (answer) => answer.questionId == currentQuestionId,
+      );
+
+      return answer.answer;
+    }
+    return "";
+  }
 
   @override
   Widget build(BuildContext context) {
@@ -82,7 +90,9 @@ class _TreeHomeState extends State<TreeHome> {
             'assets/tree.png',
             fit: BoxFit.cover,
             width: double.infinity,
-            height: 800, // Adjust the height as needed
+            height: MediaQuery.of(context)
+                .size
+                .height, // Adjust the height as needed
           ),
           // Character image (smaller and in front)
           Positioned(
@@ -128,7 +138,9 @@ class _TreeHomeState extends State<TreeHome> {
             Positioned(
               bottom: 80, // Adjust the position as needed
               left: MediaQuery.of(context).size.width / 2 - 150,
-              child: const InputBubble(),
+              child: InputBubble(
+                answer: answer,
+              ),
             ),
           // Pijltje Links
           Positioned(
@@ -162,7 +174,11 @@ class _TreeHomeState extends State<TreeHome> {
               ),
               onPressed: () {
                 setState(() {
-                  isInputVisible = true;
+                  if (!isInputVisible) {
+                    isInputVisible = true;
+                  } else {
+                    isInputVisible = false;
+                  }
                 });
               },
               child: const Text(
@@ -242,14 +258,23 @@ class ChatBubble extends StatelessWidget {
 }
 
 class InputBubble extends StatefulWidget {
-  const InputBubble({Key? key}) : super(key: key);
+  final String? answer;
+  const InputBubble({Key? key, this.answer}) : super(key: key);
 
   @override
   _InputBubbleState createState() => _InputBubbleState();
 }
 
 class _InputBubbleState extends State<InputBubble> {
-  TextEditingController _textController = TextEditingController();
+  final TextEditingController _textController = TextEditingController();
+
+  @override
+  void initState() {
+    super.initState();
+    if (widget.answer != null) {
+      _textController.text = widget.answer!;
+    }
+  }
 
   @override
   Widget build(BuildContext context) {
