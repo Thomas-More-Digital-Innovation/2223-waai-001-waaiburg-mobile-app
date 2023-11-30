@@ -1,5 +1,9 @@
+import 'dart:convert';
+
 import 'package:flutter/material.dart';
 import 'package:mobileapp/api/question_list.dart';
+import 'package:shared_preferences/shared_preferences.dart';
+import 'package:http/http.dart' as http;
 
 class TreeHome extends StatefulWidget {
   const TreeHome({Key? key}) : super(key: key);
@@ -283,6 +287,35 @@ class _InputBubbleState extends State<InputBubble> {
     }
   }
 
+  Future<void> _sendAnswer(String answer) async {
+    const String apiUrl = 'https://dewaaiburgapp.eu/api/answer'; // API URL
+    SharedPreferences prefs = await SharedPreferences.getInstance();
+    final token = prefs.get('userToken');
+
+    try {
+      final response = await http.put(
+        Uri.parse(apiUrl),
+        headers: {
+          'Authorization': 'Bearer $token',
+          'Content-Type': 'application/json',
+        },
+        body: jsonEncode({
+          'answer': answer,
+        }),
+      );
+
+      if (response.statusCode == 200) {
+        print('Answer sent successfully');
+      } else {
+        print("Request failed with status: ${response.statusCode}");
+        throw Exception('Failed to send answer');
+      }
+    } catch (e) {
+      print("Request failed with exception: $e");
+      throw Exception('Failed to send answer');
+    }
+  }
+
   @override
   Widget build(BuildContext context) {
     return LayoutBuilder(
@@ -309,8 +342,10 @@ class _InputBubbleState extends State<InputBubble> {
                     icon: const Icon(Icons.send),
                     onPressed: () {
                       // Handle sending the message
-                      
-                      print("Sending message: ${_textController.text}");
+                      final newAnswer = _textController.text;
+                      print("Sending message: $newAnswer");
+
+                      _sendAnswer(newAnswer);
                     },
                   ),
                 ],
