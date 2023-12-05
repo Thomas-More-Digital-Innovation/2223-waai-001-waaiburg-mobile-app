@@ -81,9 +81,9 @@ class Answer {
   final int id;
   final int userId;
   final int questionId;
-  final String answer;
+  late String answer;
 
-  const Answer({
+  Answer({
     required this.id,
     required this.userId,
     required this.questionId,

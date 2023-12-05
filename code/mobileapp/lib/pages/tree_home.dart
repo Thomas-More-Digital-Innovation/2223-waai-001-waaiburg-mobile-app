@@ -287,6 +287,7 @@ class _InputBubbleState extends State<InputBubble> {
     const String apiUrl = 'https://dewaaiburgapp.eu/api/answer/'; // API URL
     SharedPreferences prefs = await SharedPreferences.getInstance();
     final token = prefs.get('userToken');
+    widget.answer!.answer = newAnswer;
 
     try {
       final response = await http.put(
@@ -298,7 +299,7 @@ class _InputBubbleState extends State<InputBubble> {
         body: jsonEncode({
           'user_id': widget.answer!.userId,
           'question_id': widget.answer!.questionId,
-          'answer': newAnswer,
+          'answer': widget.answer!.answer,
         }),
       );
 
