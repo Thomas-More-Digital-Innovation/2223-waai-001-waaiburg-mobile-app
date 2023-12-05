@@ -9,7 +9,8 @@ Future<List<dynamic>> fetchQuestionList() async {
   final token = prefs.get('userToken');
 
   try {
-    final response = await http.get(Uri.parse(apiUrl), headers: {'Authorization': 'Bearer $token'});
+    final response = await http
+        .get(Uri.parse(apiUrl), headers: {'Authorization': 'Bearer $token'});
 
     if (response.statusCode == 200) {
       // Fetch the activeList ID
@@ -35,7 +36,6 @@ Future<List<dynamic>> fetchQuestionList() async {
     throw Exception('Failed to load data');
   }
 }
-
 
 class QuestionList {
   final int id;
@@ -79,11 +79,13 @@ class Question {
 
 class Answer {
   final int id;
+  final int userId;
   final int questionId;
   final String answer;
 
   const Answer({
     required this.id,
+    required this.userId,
     required this.questionId,
     required this.answer,
   });
@@ -91,6 +93,7 @@ class Answer {
   factory Answer.fromJson(Map<String, dynamic> json) {
     return Answer(
       id: json['id'],
+      userId: json['user_id'],
       questionId: json['question_id'],
       answer: json['answer'],
     );

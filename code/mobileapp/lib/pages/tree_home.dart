@@ -19,7 +19,7 @@ class _TreeHomeState extends State<TreeHome> {
   List<Answer>? answersList;
   int currentQuestionIndex = 0;
   bool isInputVisible = false;
-  String? answerText;
+  Answer? answer;
 
   @override
   void initState() {
@@ -54,7 +54,7 @@ class _TreeHomeState extends State<TreeHome> {
       setState(() {
         currentQuestionIndex--;
         isInputVisible = false;
-        answerText = _getAnswerValue(currentQuestionIndex);
+        answer = _getAnswerValue(currentQuestionIndex);
       });
     }
   }
@@ -65,12 +65,12 @@ class _TreeHomeState extends State<TreeHome> {
       setState(() {
         currentQuestionIndex++;
         isInputVisible = false;
-        answerText = _getAnswerValue(currentQuestionIndex);
+        answer = _getAnswerValue(currentQuestionIndex);
       });
     }
   }
 
-  String? _getAnswerValue(int questionIndex) {
+  Answer? _getAnswerValue(int questionIndex) {
     if (questionIndex >= 0 && questionIndex < questionsList!.length) {
       final currentQuestionId = questionsList![currentQuestionIndex].id;
 
@@ -79,16 +79,12 @@ class _TreeHomeState extends State<TreeHome> {
           (answer) => answer.questionId == currentQuestionId,
         );
 
-        return answer.answer;
+        return answer;
       } catch (e) {
         return null;
       }
     }
     return null;
-  }
-
-  void updateAnswer(String newAnswer) {
-    print(newAnswer);
   }
 
   @override
@@ -150,7 +146,7 @@ class _TreeHomeState extends State<TreeHome> {
               bottom: 80, // Adjust the position as needed
               left: MediaQuery.of(context).size.width / 2 - 150,
               child: InputBubble(
-                answer: answerText,
+                answer: answer,
               ),
             ),
           // Pijltje Links
@@ -269,7 +265,7 @@ class ChatBubble extends StatelessWidget {
 }
 
 class InputBubble extends StatefulWidget {
-  late String? answer;
+  late Answer? answer;
   InputBubble({Key? key, this.answer}) : super(key: key);
 
   @override
@@ -283,23 +279,31 @@ class _InputBubbleState extends State<InputBubble> {
   void initState() {
     super.initState();
     if (widget.answer != null) {
-      _textController.text = widget.answer!;
+      _textController.text = widget.answer!.answer;
     }
   }
 
-  Future<void> _sendAnswer(String answer) async {
+  Future<void> _sendAnswer(String newAnswer) async {
     const String apiUrl = 'https://dewaaiburgapp.eu/api/answer'; // API URL
     SharedPreferences prefs = await SharedPreferences.getInstance();
     final token = prefs.get('userToken');
 
     try {
-      final response = await http.put(
+      final answer = Answer(
+        answer: newAnswer,
+        questionId: widget.answer!.questionId,
+        userId: widget.answer!.userId,
+        id: widget.answer!.id,
+      );
+      final response = await http.patch(
         Uri.parse(apiUrl),
         headers: {
           'Authorization': 'Bearer $token',
           'Content-Type': 'application/json',
         },
         body: jsonEncode({
+          'user_id' : widget.answer!.userId,
+          'question_id': widget.answer!.questionId,
           'answer': answer,
         }),
       );
