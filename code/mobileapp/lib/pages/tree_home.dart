@@ -284,34 +284,61 @@ class _InputBubbleState extends State<InputBubble> {
   }
 
   Future<void> _sendAnswer(String newAnswer) async {
-    const String apiUrl = 'https://dewaaiburgapp.eu/api/answer/'; // API URL
+    String apiUrl = 'https://dewaaiburgapp.eu/api/answer/'; // API URL
     SharedPreferences prefs = await SharedPreferences.getInstance();
     final token = prefs.get('userToken');
-    widget.answer!.answer = newAnswer;
+    print(token);
 
-    try {
-      final response = await http.put(
-        Uri.parse(apiUrl + widget.answer!.id.toString()),
-        headers: {
-          'Authorization': 'Bearer $token',
-          'Content-Type': 'application/json',
-        },
-        body: jsonEncode({
-          'user_id': widget.answer!.userId,
-          'question_id': widget.answer!.questionId,
-          'answer': widget.answer!.answer,
-        }),
-      );
+    if (widget.answer == null) {
+      widget.answer!.answer = newAnswer;
+      try {
+        final response = await http.put(
+          Uri.parse(apiUrl + widget.answer!.id.toString()),
+          headers: {
+            'Authorization': 'Bearer $token',
+            'Content-Type': 'application/json',
+          },
+          body: jsonEncode({
+            'user_id': widget.answer!.userId,
+            'question_id': widget.answer!.questionId,
+            'answer': widget.answer!.answer,
+          }),
+        );
 
-      if (response.statusCode == 200) {
-        print('Answer sent successfully');
-      } else {
-        print("Request failed with status: ${response.statusCode}");
+        if (response.statusCode == 200) {
+          print('Answer sent successfully');
+        } else {
+          print("Request failed with status: ${response.statusCode}");
+          throw Exception('Failed to send answer');
+        }
+      } catch (e) {
+        print("Request failed with exception: $e");
         throw Exception('Failed to send answer');
       }
-    } catch (e) {
-      print("Request failed with exception: $e");
-      throw Exception('Failed to send answer');
+    } else {
+      try {
+        final response = await http.post(
+          Uri.parse(apiUrl),
+          headers: {
+            'Authorization': 'Bearer $token',
+            'Content-Type': 'application/json',
+          },
+          body: jsonEncode({
+            'question_id': widget.answer!.questionId,
+            'answer': newAnswer,
+          }),
+        );
+
+        if (response.statusCode == 200) {
+          print('Answer sent successfully');
+        } else {
+          print("Request failed with status: ${response.statusCode}");
+          throw Exception('Failed to send answer');
+        }
+      } catch (e) {
+        print("Request failed with exception: $e");
+        throw Exception('Failed to send answer');
+      }
     }
   }
 
