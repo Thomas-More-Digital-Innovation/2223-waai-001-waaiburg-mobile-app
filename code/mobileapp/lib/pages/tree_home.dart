@@ -284,27 +284,21 @@ class _InputBubbleState extends State<InputBubble> {
   }
 
   Future<void> _sendAnswer(String newAnswer) async {
-    const String apiUrl = 'https://dewaaiburgapp.eu/api/answer'; // API URL
+    const String apiUrl = 'https://dewaaiburgapp.eu/api/answer/'; // API URL
     SharedPreferences prefs = await SharedPreferences.getInstance();
     final token = prefs.get('userToken');
 
     try {
-      final answer = Answer(
-        answer: newAnswer,
-        questionId: widget.answer!.questionId,
-        userId: widget.answer!.userId,
-        id: widget.answer!.id,
-      );
-      final response = await http.patch(
-        Uri.parse(apiUrl),
+      final response = await http.put(
+        Uri.parse(apiUrl + widget.answer!.id.toString()),
         headers: {
           'Authorization': 'Bearer $token',
           'Content-Type': 'application/json',
         },
         body: jsonEncode({
-          'user_id' : widget.answer!.userId,
+          'user_id': widget.answer!.userId,
           'question_id': widget.answer!.questionId,
-          'answer': answer,
+          'answer': newAnswer,
         }),
       );
 
