@@ -23,7 +23,6 @@ void main() {
       '/home': (context) => const Home(),
       '/news': (context) => const News(),
       '/treehome': (context) => const TreeHome(),
-      '/testlottie': (context) => const TestLottie(),
     },
   ));
 }
