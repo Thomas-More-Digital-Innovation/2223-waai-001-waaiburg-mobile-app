@@ -87,6 +87,11 @@ class _TreeHomeState extends State<TreeHome> {
     return null;
   }
 
+  Future<void> reloadAllData() async {
+    print("REACHING FUNCTION!");
+    await _initializeData();
+  }
+
   @override
   Widget build(BuildContext context) {
     return Scaffold(
@@ -148,6 +153,7 @@ class _TreeHomeState extends State<TreeHome> {
               child: InputBubble(
                 answer: answer,
                 questionId: questionsList![currentQuestionIndex].id,
+                reloadData: reloadAllData,
               ),
             ),
           // Pijltje Links
@@ -268,7 +274,12 @@ class ChatBubble extends StatelessWidget {
 class InputBubble extends StatefulWidget {
   late Answer? answer;
   final int questionId;
-  InputBubble({Key? key, this.answer, required this.questionId})
+  final Function reloadData;
+  InputBubble(
+      {Key? key,
+      this.answer,
+      required this.questionId,
+      required this.reloadData})
       : super(key: key);
 
   @override
@@ -310,6 +321,7 @@ class _InputBubbleState extends State<InputBubble> {
 
         if (response.statusCode == 200) {
           print('Answer sent successfully');
+          await widget.reloadData();
         } else {
           print("Request failed with status: ${response.statusCode}");
           throw Exception('Failed to send answer');
