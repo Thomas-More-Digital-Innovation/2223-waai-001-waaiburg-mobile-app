@@ -147,6 +147,7 @@ class _TreeHomeState extends State<TreeHome> {
               left: MediaQuery.of(context).size.width / 2 - 150,
               child: InputBubble(
                 answer: answer,
+                questionId: currentQuestionIndex,
               ),
             ),
           // Pijltje Links
@@ -266,7 +267,9 @@ class ChatBubble extends StatelessWidget {
 
 class InputBubble extends StatefulWidget {
   late Answer? answer;
-  InputBubble({Key? key, this.answer}) : super(key: key);
+  final int questionId;
+  InputBubble({Key? key, this.answer, required this.questionId})
+      : super(key: key);
 
   @override
   _InputBubbleState createState() => _InputBubbleState();
@@ -289,7 +292,7 @@ class _InputBubbleState extends State<InputBubble> {
     final token = prefs.get('userToken');
     print(token);
 
-    if (widget.answer == null) {
+    if (widget.answer != null) {
       widget.answer!.answer = newAnswer;
       try {
         final response = await http.put(
@@ -324,7 +327,7 @@ class _InputBubbleState extends State<InputBubble> {
             'Content-Type': 'application/json',
           },
           body: jsonEncode({
-            'question_id': widget.answer!.questionId,
+            'question_id': widget.questionId,
             'answer': newAnswer,
           }),
         );
