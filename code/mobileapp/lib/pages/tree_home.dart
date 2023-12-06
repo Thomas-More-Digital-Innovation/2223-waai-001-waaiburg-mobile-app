@@ -1,5 +1,9 @@
+import 'dart:convert';
+
 import 'package:flutter/material.dart';
-import 'package:mobileapp/api/questionList.dart';
+import 'package:mobileapp/api/question_list.dart';
+import 'package:shared_preferences/shared_preferences.dart';
+import 'package:http/http.dart' as http;
 
 class TreeHome extends StatefulWidget {
   const TreeHome({Key? key}) : super(key: key);
@@ -9,12 +13,78 @@ class TreeHome extends StatefulWidget {
 }
 
 class _TreeHomeState extends State<TreeHome> {
-  late Future<List<QuestionList>> futureQuestionLists;
+  late Future<List<dynamic>> futureQuestionAnswerList;
+
+  List<Question>? questionsList;
+  List<Answer>? answersList;
+  int currentQuestionIndex = 0;
+  bool isInputVisible = false;
+  Answer? answer;
 
   @override
   void initState() {
     super.initState();
-    futureQuestionLists = fetchQuestionList();
+    _initializeData();
+  }
+
+  Future<void> _initializeData() async {
+    futureQuestionAnswerList = fetchQuestionList();
+
+    // Using `await` to wait for the future to complete before accessing its value
+    List<dynamic> questionAnswerList = await futureQuestionAnswerList;
+
+    // Now you can access the elements of the list
+    questionsList = questionAnswerList[0];
+    answersList = questionAnswerList[1];
+
+    // Find the index of the first unanswered question
+    int indexOfFirstUnansweredQuestion = questionsList!.indexWhere((question) =>
+        answersList!.every((answer) => answer.questionId != question.id));
+
+    // Set currentQuestionIndex to the found index, or 0 if no unanswered questions are found
+    setState(() {
+      currentQuestionIndex = indexOfFirstUnansweredQuestion >= 0
+          ? indexOfFirstUnansweredQuestion
+          : 0;
+    });
+  }
+
+  void _goToPreviousQuestion() {
+    if (currentQuestionIndex > 0) {
+      setState(() {
+        currentQuestionIndex--;
+        isInputVisible = false;
+        answer = _getAnswerValue(currentQuestionIndex);
+      });
+    }
+  }
+
+  void _goToNextQuestion() {
+    if (questionsList != null &&
+        currentQuestionIndex < questionsList!.length - 1) {
+      setState(() {
+        currentQuestionIndex++;
+        isInputVisible = false;
+        answer = _getAnswerValue(currentQuestionIndex);
+      });
+    }
+  }
+
+  Answer? _getAnswerValue(int questionIndex) {
+    if (questionIndex >= 0 && questionIndex < questionsList!.length) {
+      final currentQuestionId = questionsList![currentQuestionIndex].id;
+
+      try {
+        final answer = answersList!.firstWhere(
+          (answer) => answer.questionId == currentQuestionId,
+        );
+
+        return answer;
+      } catch (e) {
+        return null;
+      }
+    }
+    return null;
   }
 
   @override
@@ -27,61 +97,62 @@ class _TreeHomeState extends State<TreeHome> {
             'assets/tree.png',
             fit: BoxFit.cover,
             width: double.infinity,
-            height: double.infinity,
+            height: MediaQuery.of(context)
+                .size
+                .height, // Adjust the height as needed
           ),
           // Character image (smaller and in front)
           Positioned(
-            bottom: 0, // Adjust the position as needed
-            right: -80, // Adjust the position as needed
+            bottom: 0,
+            right: -80,
             child: Image.asset(
               'assets/character.png',
-              width: 400, // Adjust the size as needed
-              height: 500, // Adjust the size as needed
+              width: 400,
+              height: 500,
+            ),
+          ),
+          Positioned(
+            top: 20,
+            left: 10,
+            child: IconButton(
+              icon: const Icon(
+                Icons.home_rounded,
+                color: Color(0xFF3855a2),
+                weight: 0.9,
+              ),
+              iconSize: 55,
+              onPressed: () => Navigator.of(context).pop(),
             ),
           ),
           // Speech Bubble
-          const Positioned(
-            top: 50, // Adjust the position as needed
-            left: 50, // Adjust the position as needed
-            child: ChatBubble(
-              message:
-                  'Hallo ik ben bryan en de waaiburg is hier super blij mee',
-              horizontalPadding: 40,
-              verticalPadding: 20,
-              backgroundColor: Colors.white,
-              textColor: Colors.black,
-            ),
-          ),
           Positioned(
-              top: 200, // Adjust the position as needed
-              left: 50, // Adjust the position as needed
-              child: FutureBuilder<List<QuestionList>>(
-                  future: futureQuestionLists,
-                  builder: ((context, snapshot) {
-                    if (snapshot.hasData &&
-                        snapshot.connectionState == ConnectionState.done) {
-                      return ListView(
-                        children:
-                            snapshot.data!.asMap().entries.map((questionList) {
-                          return ChatBubble(
-                            message: questionList.value.title,
-                            horizontalPadding: 40,
-                            verticalPadding: 20,
-                            backgroundColor: Colors.white,
-                            textColor: Colors.black,
-                          );
-                        }).toList(),
-                      );
-                    }
-                    // show a loading spinnersnapshot.data!.where((i) => i.sectionId == 1).toList());
-                    else {
-                      return const CircularProgressIndicator();
-                    }
-                  }))),
+            top: 100,
+            left: 50,
+            child: questionsList == null
+                ? const CircularProgressIndicator()
+                : questionsList!.isEmpty
+                    ? const Text("No questions available")
+                    : ChatBubble(
+                        message: questionsList![currentQuestionIndex].content,
+                        horizontalPadding: 40,
+                        verticalPadding: 20,
+                        backgroundColor: Colors.white,
+                        textColor: Colors.black,
+                      ),
+          ),
+          // Input bubble
+          if (isInputVisible)
+            Positioned(
+              bottom: 80, // Adjust the position as needed
+              left: MediaQuery.of(context).size.width / 2 - 150,
+              child: InputBubble(
+                answer: answer,
+              ),
+            ),
           // Pijltje Links
           Positioned(
-            bottom: -10, // Adjust the position as needed
-            left: 10, // Adjust the position as needed
+            bottom: -10,
+            left: 10,
             child: IconButton(
               icon: Transform.rotate(
                 angle: 45,
@@ -92,7 +163,7 @@ class _TreeHomeState extends State<TreeHome> {
                 ),
               ),
               iconSize: 55,
-              onPressed: () => Navigator.of(context).pop(),
+              onPressed: _goToPreviousQuestion,
             ),
           ),
           const SizedBox(
@@ -108,7 +179,15 @@ class _TreeHomeState extends State<TreeHome> {
               style: TextButton.styleFrom(
                 backgroundColor: const Color(0xFF3855a2),
               ),
-              onPressed: (() => {}),
+              onPressed: () {
+                setState(() {
+                  if (!isInputVisible) {
+                    isInputVisible = true;
+                  } else {
+                    isInputVisible = false;
+                  }
+                });
+              },
               child: const Text(
                 'Antwoorden',
                 style:
@@ -130,7 +209,7 @@ class _TreeHomeState extends State<TreeHome> {
                 weight: 0.9,
               ),
               iconSize: 55,
-              onPressed: () => Navigator.of(context).pop(),
+              onPressed: _goToNextQuestion,
             ),
           ),
         ],
@@ -181,6 +260,126 @@ class ChatBubble extends StatelessWidget {
           ),
         ),
       ),
+    );
+  }
+}
+
+class InputBubble extends StatefulWidget {
+  late Answer? answer;
+  InputBubble({Key? key, this.answer}) : super(key: key);
+
+  @override
+  _InputBubbleState createState() => _InputBubbleState();
+}
+
+class _InputBubbleState extends State<InputBubble> {
+  final TextEditingController _textController = TextEditingController();
+
+  @override
+  void initState() {
+    super.initState();
+    if (widget.answer != null) {
+      _textController.text = widget.answer!.answer;
+    }
+  }
+
+  Future<void> _sendAnswer(String newAnswer) async {
+    String apiUrl = 'https://dewaaiburgapp.eu/api/answer/'; // API URL
+    SharedPreferences prefs = await SharedPreferences.getInstance();
+    final token = prefs.get('userToken');
+    print(token);
+
+    if (widget.answer == null) {
+      widget.answer!.answer = newAnswer;
+      try {
+        final response = await http.put(
+          Uri.parse(apiUrl + widget.answer!.id.toString()),
+          headers: {
+            'Authorization': 'Bearer $token',
+            'Content-Type': 'application/json',
+          },
+          body: jsonEncode({
+            'user_id': widget.answer!.userId,
+            'question_id': widget.answer!.questionId,
+            'answer': widget.answer!.answer,
+          }),
+        );
+
+        if (response.statusCode == 200) {
+          print('Answer sent successfully');
+        } else {
+          print("Request failed with status: ${response.statusCode}");
+          throw Exception('Failed to send answer');
+        }
+      } catch (e) {
+        print("Request failed with exception: $e");
+        throw Exception('Failed to send answer');
+      }
+    } else {
+      try {
+        final response = await http.post(
+          Uri.parse(apiUrl),
+          headers: {
+            'Authorization': 'Bearer $token',
+            'Content-Type': 'application/json',
+          },
+          body: jsonEncode({
+            'question_id': widget.answer!.questionId,
+            'answer': newAnswer,
+          }),
+        );
+
+        if (response.statusCode == 200) {
+          print('Answer sent successfully');
+        } else {
+          print("Request failed with status: ${response.statusCode}");
+          throw Exception('Failed to send answer');
+        }
+      } catch (e) {
+        print("Request failed with exception: $e");
+        throw Exception('Failed to send answer');
+      }
+    }
+  }
+
+  @override
+  Widget build(BuildContext context) {
+    return LayoutBuilder(
+      builder: (context, constraints) {
+        return SizedBox(
+          width: 300,
+          height: 50,
+          child: ClipPath(
+            clipper: BubbleClipper(),
+            child: Container(
+              color: Colors.white,
+              padding: const EdgeInsets.all(8.0),
+              child: Row(
+                children: [
+                  Expanded(
+                    child: TextField(
+                      controller: _textController,
+                      decoration: const InputDecoration.collapsed(
+                        hintText: 'Typ je antwoord...',
+                      ),
+                    ),
+                  ),
+                  IconButton(
+                    icon: const Icon(Icons.send),
+                    onPressed: () {
+                      // Handle sending the message
+                      final newAnswer = _textController.text;
+                      print("Sending message: $newAnswer");
+
+                      _sendAnswer(newAnswer);
+                    },
+                  ),
+                ],
+              ),
+            ),
+          ),
+        );
+      },
     );
   }
 }
