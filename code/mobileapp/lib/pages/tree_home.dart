@@ -32,7 +32,6 @@ class _TreeHomeState extends State<TreeHome> with TickerProviderStateMixin {
     _initializeData();
 
     _controller = AnimationController(vsync: this);
-    _state = currentQuestionIndex;
   }
 
   @override
@@ -64,9 +63,10 @@ class _TreeHomeState extends State<TreeHome> with TickerProviderStateMixin {
 
     // set the current tree part index to the found index, or 0 if no unanswered questions are found
     setState(() {
-      currentTreePartIndex = indexOfFirstUnansweredQuestion >= 0
-          ? indexOfFirstUnansweredQuestion
-          : 0;
+      currentTreePartIndex = questionsList![currentQuestionIndex].treePartId;
+    });
+    setState(() {
+      _state = currentTreePartIndex - 1;
     });
   }
 
