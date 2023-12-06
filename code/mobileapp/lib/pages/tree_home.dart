@@ -147,7 +147,7 @@ class _TreeHomeState extends State<TreeHome> {
               left: MediaQuery.of(context).size.width / 2 - 150,
               child: InputBubble(
                 answer: answer,
-                questionId: currentQuestionIndex,
+                questionId: questionsList![currentQuestionIndex].id,
               ),
             ),
           // Pijltje Links
@@ -287,22 +287,22 @@ class _InputBubbleState extends State<InputBubble> {
   }
 
   Future<void> _sendAnswer(String newAnswer) async {
-    String apiUrl = 'https://dewaaiburgapp.eu/api/answer/'; // API URL
+    String apiUrl = 'https://dewaaiburgapp.eu/api/answer'; // API URL
     SharedPreferences prefs = await SharedPreferences.getInstance();
     final token = prefs.get('userToken');
-    print(token);
+    final userId = prefs.get('userId');
 
     if (widget.answer != null) {
       widget.answer!.answer = newAnswer;
       try {
         final response = await http.put(
-          Uri.parse(apiUrl + widget.answer!.id.toString()),
+          Uri.parse("$apiUrl/${widget.answer!.id}"),
           headers: {
             'Authorization': 'Bearer $token',
             'Content-Type': 'application/json',
           },
           body: jsonEncode({
-            'user_id': widget.answer!.userId,
+            'user_id': userId,
             'question_id': widget.answer!.questionId,
             'answer': widget.answer!.answer,
           }),
@@ -327,6 +327,7 @@ class _InputBubbleState extends State<InputBubble> {
             'Content-Type': 'application/json',
           },
           body: jsonEncode({
+            'user_id': userId,
             'question_id': widget.questionId,
             'answer': newAnswer,
           }),

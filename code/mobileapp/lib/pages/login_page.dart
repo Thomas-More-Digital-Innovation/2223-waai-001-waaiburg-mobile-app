@@ -29,6 +29,9 @@ class _MyWidgetState extends State<LoginPage> {
         SharedPreferences prefs = await SharedPreferences.getInstance();
         prefs.setString('userToken', data['Token']);
 
+        Map<String, dynamic> userData = data['User'];
+        prefs.setInt('userId', userData['id']);
+
         Navigator.pushNamed(context, '/home');
       } else {
         setState(() {
