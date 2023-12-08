@@ -3,6 +3,7 @@ import 'dart:convert';
 import 'package:flutter/material.dart';
 import 'package:http/http.dart';
 import 'package:shared_preferences/shared_preferences.dart';
+import 'package:url_launcher/url_launcher.dart';
 
 import '../components/header.dart';
 
@@ -113,7 +114,10 @@ class _MyWidgetState extends State<LoginPage> {
               Container(
                 alignment: Alignment.centerRight,
                 child: GestureDetector(
-                  onTap: () {},
+                  onTap: () {
+                    launchUrl(
+                        Uri.parse("https://dewaaiburgapp.eu/forgot-password"));
+                  },
                   child: Text(
                     'Wachtwoord vergeten?',
                     style: TextStyle(
