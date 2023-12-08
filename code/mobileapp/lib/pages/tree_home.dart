@@ -88,8 +88,8 @@ class _TreeHomeState extends State<TreeHome> {
   }
 
   Future<void> reloadAllData() async {
-    print("REACHING FUNCTION!");
     await _initializeData();
+    isInputVisible = false;
   }
 
   @override
@@ -321,7 +321,6 @@ class _InputBubbleState extends State<InputBubble> {
 
         if (response.statusCode == 200) {
           print('Answer sent successfully');
-          await widget.reloadData();
         } else {
           print("Request failed with status: ${response.statusCode}");
           throw Exception('Failed to send answer');
@@ -347,6 +346,7 @@ class _InputBubbleState extends State<InputBubble> {
 
         if (response.statusCode == 200) {
           print('Answer sent successfully');
+          widget.reloadData();
         } else {
           print("Request failed with status: ${response.statusCode}");
           throw Exception('Failed to send answer');
@@ -385,8 +385,6 @@ class _InputBubbleState extends State<InputBubble> {
                     onPressed: () {
                       // Handle sending the message
                       final newAnswer = _textController.text;
-                      print("Sending message: $newAnswer");
-
                       _sendAnswer(newAnswer);
                     },
                   ),
