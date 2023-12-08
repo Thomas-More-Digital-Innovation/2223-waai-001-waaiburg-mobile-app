@@ -5,7 +5,6 @@ import 'package:mobileapp/pages/info_content_select.dart';
 import 'package:mobileapp/pages/info_segments.dart';
 import 'package:mobileapp/pages/info_contents.dart';
 import 'package:mobileapp/pages/news.dart';
-import 'package:mobileapp/pages/test_lottie.dart';
 import 'package:mobileapp/pages/tree_home.dart';
 
 /// The website screen
@@ -14,7 +13,7 @@ void main() {
   runApp(MaterialApp(
     debugShowCheckedModeBanner: false,
     theme: ThemeData(fontFamily: 'Epilogue'),
-    initialRoute: "/testlottie",
+    initialRoute: "/home",
     routes: {
       '/login': (context) => const LoginPage(),
       '/infosegment': (context) => const InfoSegments(),
@@ -23,7 +22,6 @@ void main() {
       '/home': (context) => const Home(),
       '/news': (context) => const News(),
       '/treehome': (context) => const TreeHome(),
-      '/testlottie': (context) => const TestLottie(),
     },
   ));
 }

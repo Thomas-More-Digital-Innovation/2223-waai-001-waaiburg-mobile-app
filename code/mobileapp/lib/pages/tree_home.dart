@@ -4,6 +4,7 @@ import 'package:flutter/material.dart';
 import 'package:mobileapp/api/question_list.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 import 'package:http/http.dart' as http;
+import 'package:lottie/lottie.dart';
 
 class TreeHome extends StatefulWidget {
   const TreeHome({Key? key}) : super(key: key);
@@ -12,19 +13,31 @@ class TreeHome extends StatefulWidget {
   State<TreeHome> createState() => _TreeHomeState();
 }
 
-class _TreeHomeState extends State<TreeHome> {
+class _TreeHomeState extends State<TreeHome> with TickerProviderStateMixin {
   late Future<List<dynamic>> futureQuestionAnswerList;
+  late final AnimationController _controller;
 
   List<Question>? questionsList;
   List<Answer>? answersList;
   int currentQuestionIndex = 0;
+  int currentTreePartIndex = 0;
   bool isInputVisible = false;
   Answer? answer;
+
+  int _state = 0;
 
   @override
   void initState() {
     super.initState();
     _initializeData();
+
+    _controller = AnimationController(vsync: this);
+  }
+
+  @override
+  void dispose() {
+    _controller.dispose();
+    super.dispose();
   }
 
   Future<void> _initializeData() async {
@@ -46,6 +59,14 @@ class _TreeHomeState extends State<TreeHome> {
       currentQuestionIndex = indexOfFirstUnansweredQuestion >= 0
           ? indexOfFirstUnansweredQuestion
           : 0;
+    });
+
+    // set the current tree part index to the found index, or 0 if no unanswered questions are found
+    setState(() {
+      currentTreePartIndex = questionsList![currentQuestionIndex].treePartId;
+    });
+    setState(() {
+      _state = currentTreePartIndex - 1;
     });
   }
 
@@ -87,30 +108,68 @@ class _TreeHomeState extends State<TreeHome> {
     return null;
   }
 
+  final treeStates = const {
+    1: 'zaadje.json',
+    2: 'stam.json',
+    3: 'takken.json',
+    4: 'bladeren.json',
+    5: 'appels.json',
+    6: 'vogels.json'
+  };
+
+  void _updateTreeState(String direction) {
+    setState(() {
+      if (direction == "Forward") {
+        if (_state < 6) {
+          _state += 1;
+          // Reset the controller to the beginning after the state update.
+          _controller.reset();
+        }
+      } else if (direction == "Backward") {
+        if (_state > 0) {
+          _state -= 1;
+          // Reset the controller to the beginning after the state update.
+          _controller.reset();
+        }
+      }
+    });
+
+    // Update the current tree part index
+    setState(() {
+      currentTreePartIndex = questionsList![currentQuestionIndex].treePartId;
+    });
+  }
+
   @override
   Widget build(BuildContext context) {
     return Scaffold(
       body: Stack(
         children: [
           // Background image (tree)
-          Image.asset(
-            'assets/tree.png',
-            fit: BoxFit.cover,
-            width: double.infinity,
-            height: MediaQuery.of(context)
-                .size
-                .height, // Adjust the height as needed
-          ),
-          // Character image (smaller and in front)
-          Positioned(
-            bottom: 0,
-            right: -80,
-            child: Image.asset(
-              'assets/character.png',
-              width: 400,
-              height: 500,
+          if (_state == 0)
+            // Show the initial image when _state is 0.
+            Image.asset(
+              'assets/tree_of_life/beginScreen.png',
+              fit: BoxFit.cover,
+              width: double.infinity,
+              height: MediaQuery.of(context).size.height,
+            )
+          else
+            // Show the Lottie animation when _state is not 0.
+            Lottie.asset(
+              'assets/tree_of_life/${treeStates[_state]}',
+              fit: BoxFit.cover,
+              width: double.infinity,
+              height: MediaQuery.of(context).size.height,
+              controller: _controller,
+              onLoaded: (composition) {
+                // Configure the AnimationController with the duration of the
+                // Lottie file and start the animation.
+                _controller
+                  ..duration = composition.duration
+                  ..forward();
+              },
             ),
-          ),
           Positioned(
             top: 20,
             left: 10,
@@ -163,7 +222,14 @@ class _TreeHomeState extends State<TreeHome> {
                 ),
               ),
               iconSize: 55,
-              onPressed: _goToPreviousQuestion,
+              onPressed: () {
+                _goToPreviousQuestion();
+                if (questionsList != null &&
+                    currentTreePartIndex <
+                        questionsList![currentQuestionIndex].treePartId) {
+                  _updateTreeState("Backward");
+                }
+              },
             ),
           ),
           const SizedBox(
@@ -209,7 +275,14 @@ class _TreeHomeState extends State<TreeHome> {
                 weight: 0.9,
               ),
               iconSize: 55,
-              onPressed: _goToNextQuestion,
+              onPressed: () {
+                _goToNextQuestion();
+                if (questionsList != null &&
+                    currentTreePartIndex <
+                        questionsList![currentQuestionIndex].treePartId) {
+                  _updateTreeState("Forward");
+                }
+              },
             ),
           ),
         ],
