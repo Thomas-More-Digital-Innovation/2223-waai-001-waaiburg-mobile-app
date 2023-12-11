@@ -108,6 +108,10 @@ class _TreeHomeState extends State<TreeHome> with TickerProviderStateMixin {
     return null;
   }
 
+  Future<void> reloadAllData() async {
+    await _initializeData();
+    isInputVisible = false;
+  }
   final treeStates = const {
     1: 'zaadje.json',
     2: 'stam.json',
@@ -206,6 +210,8 @@ class _TreeHomeState extends State<TreeHome> with TickerProviderStateMixin {
               left: MediaQuery.of(context).size.width / 2 - 150,
               child: InputBubble(
                 answer: answer,
+                questionId: questionsList![currentQuestionIndex].id,
+                reloadData: reloadAllData,
               ),
             ),
           // Pijltje Links
@@ -339,7 +345,14 @@ class ChatBubble extends StatelessWidget {
 
 class InputBubble extends StatefulWidget {
   late Answer? answer;
-  InputBubble({Key? key, this.answer}) : super(key: key);
+  final int questionId;
+  final Function reloadData;
+  InputBubble(
+      {Key? key,
+      this.answer,
+      required this.questionId,
+      required this.reloadData})
+      : super(key: key);
 
   @override
   _InputBubbleState createState() => _InputBubbleState();
@@ -357,22 +370,22 @@ class _InputBubbleState extends State<InputBubble> {
   }
 
   Future<void> _sendAnswer(String newAnswer) async {
-    String apiUrl = 'https://dewaaiburgapp.eu/api/answer/'; // API URL
+    String apiUrl = 'https://dewaaiburgapp.eu/api/answer'; // API URL
     SharedPreferences prefs = await SharedPreferences.getInstance();
     final token = prefs.get('userToken');
-    print(token);
+    final userId = prefs.get('userId');
 
-    if (widget.answer == null) {
+    if (widget.answer != null) {
       widget.answer!.answer = newAnswer;
       try {
         final response = await http.put(
-          Uri.parse(apiUrl + widget.answer!.id.toString()),
+          Uri.parse("$apiUrl/${widget.answer!.id}"),
           headers: {
             'Authorization': 'Bearer $token',
             'Content-Type': 'application/json',
           },
           body: jsonEncode({
-            'user_id': widget.answer!.userId,
+            'user_id': userId,
             'question_id': widget.answer!.questionId,
             'answer': widget.answer!.answer,
           }),
@@ -397,13 +410,15 @@ class _InputBubbleState extends State<InputBubble> {
             'Content-Type': 'application/json',
           },
           body: jsonEncode({
-            'question_id': widget.answer!.questionId,
+            'user_id': userId,
+            'question_id': widget.questionId,
             'answer': newAnswer,
           }),
         );
 
         if (response.statusCode == 200) {
           print('Answer sent successfully');
+          widget.reloadData();
         } else {
           print("Request failed with status: ${response.statusCode}");
           throw Exception('Failed to send answer');
@@ -442,8 +457,6 @@ class _InputBubbleState extends State<InputBubble> {
                     onPressed: () {
                       // Handle sending the message
                       final newAnswer = _textController.text;
-                      print("Sending message: $newAnswer");
-
                       _sendAnswer(newAnswer);
                     },
                   ),

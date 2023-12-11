@@ -13,8 +13,6 @@ Future<List<dynamic>> fetchQuestionList() async {
         .get(Uri.parse(apiUrl), headers: {'Authorization': 'Bearer $token'});
 
     if (response.statusCode == 200) {
-      // Fetch the activeList ID
-      Iterable activeLists = jsonDecode(response.body)['question_list_ids'][0];
       // Fetch the questions
       Iterable questions = jsonDecode(response.body)['questions'][0];
       // Fetch the answers
