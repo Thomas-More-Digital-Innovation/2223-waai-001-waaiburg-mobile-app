@@ -65,9 +65,12 @@ class _TreeHomeState extends State<TreeHome> with TickerProviderStateMixin {
     setState(() {
       currentTreePartIndex = questionsList![currentQuestionIndex].treePartId;
     });
+    // set the current index to the current tree part index - 1 because the tree part index starts at 1
     setState(() {
       _state = currentTreePartIndex - 1;
     });
+    // set the answer to the answer of the current question
+    setState((() => answer = _getAnswerValue(currentQuestionIndex)));
   }
 
   void _goToPreviousQuestion() {
@@ -112,6 +115,7 @@ class _TreeHomeState extends State<TreeHome> with TickerProviderStateMixin {
     await _initializeData();
     isInputVisible = false;
   }
+
   final treeStates = const {
     1: 'zaadje.json',
     2: 'stam.json',
