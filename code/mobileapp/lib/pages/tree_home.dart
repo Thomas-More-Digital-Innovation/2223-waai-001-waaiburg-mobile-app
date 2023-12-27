@@ -1,10 +1,12 @@
+import 'dart:async';
 import 'dart:convert';
 
 import 'package:flutter/material.dart';
 import 'package:mobileapp/api/question_list.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 import 'package:http/http.dart' as http;
-import 'package:lottie/lottie.dart';
+import 'package:chewie/chewie.dart';
+import 'package:video_player/video_player.dart';
 
 class TreeHome extends StatefulWidget {
   const TreeHome({Key? key}) : super(key: key);
@@ -15,7 +17,6 @@ class TreeHome extends StatefulWidget {
 
 class _TreeHomeState extends State<TreeHome> with TickerProviderStateMixin {
   late Future<List<dynamic>> futureQuestionAnswerList;
-  late final AnimationController _controller;
 
   List<Question>? questionsList;
   List<Answer>? answersList;
@@ -26,17 +27,19 @@ class _TreeHomeState extends State<TreeHome> with TickerProviderStateMixin {
 
   int _state = 0;
 
+  late VideoPlayerController _videoPlayerController;
+  late ChewieController _chewieController;
+
   @override
   void initState() {
     super.initState();
     _initializeData();
-
-    _controller = AnimationController(vsync: this);
   }
 
   @override
   void dispose() {
-    _controller.dispose();
+    _videoPlayerController.dispose();
+    _chewieController.dispose();
     super.dispose();
   }
 
@@ -71,6 +74,28 @@ class _TreeHomeState extends State<TreeHome> with TickerProviderStateMixin {
     });
     // set the answer to the answer of the current question
     setState((() => answer = _getAnswerValue(currentQuestionIndex)));
+
+    // Initialize the video player controller with the asset
+    _videoPlayerController = VideoPlayerController.asset("");
+
+    // Initialize the Chewie controller
+    _chewieController = ChewieController(
+      videoPlayerController: _videoPlayerController,
+      // ignore: use_build_context_synchronously
+      aspectRatio: MediaQuery.of(context).size.width /
+          // ignore: use_build_context_synchronously
+          MediaQuery.of(context).size.height,
+      // ... other properties remain the same
+      // Adjust the aspect ratio as needed
+      autoInitialize: true,
+      autoPlay: true,
+      looping: false,
+      allowPlaybackSpeedChanging: false,
+      showControlsOnInitialize: false,
+      allowFullScreen: true,
+      showControls: false,
+      showOptions: false,
+    );
   }
 
   void _goToPreviousQuestion() {
@@ -117,35 +142,82 @@ class _TreeHomeState extends State<TreeHome> with TickerProviderStateMixin {
   }
 
   final treeStates = const {
-    1: 'zaadje.json',
-    2: 'stam.json',
-    3: 'takken.json',
-    4: 'bladeren.json',
-    5: 'appels.json',
-    6: 'vogels.json'
+    0: 'zaadje',
+    1: 'zaadje',
+    2: 'stam',
+    3: 'takken',
+    4: 'bladeren',
+    5: 'appels',
+    6: 'vogels'
   };
 
-  void _updateTreeState(String direction) {
+  void _updateTreeState(String direction) async {
+    final Completer<void> completer = Completer<void>();
+
     setState(() {
       if (direction == "Forward") {
         if (_state < 6) {
           _state += 1;
           // Reset the controller to the beginning after the state update.
-          _controller.reset();
         }
       } else if (direction == "Backward") {
         if (_state > 0) {
           _state -= 1;
           // Reset the controller to the beginning after the state update.
-          _controller.reset();
         }
       }
     });
+
+    // Load the images asynchronously
+    await _loadImages().then((_) {
+      completer.complete();
+    });
+
+    // Wait until the images are fully loaded before updating the video controller
+    await completer.future;
 
     // Update the current tree part index
     setState(() {
       currentTreePartIndex = questionsList![currentQuestionIndex].treePartId;
     });
+
+    // Update the video controller with the new video asset
+    _videoPlayerController = VideoPlayerController.asset(
+        'assets/tree_of_life/${treeStates[_state]}.mov');
+
+    // Dispose of the previous Chewie controller and create a new one
+    _chewieController.dispose();
+
+    _chewieController = ChewieController(
+      videoPlayerController: _videoPlayerController,
+      // ignore: use_build_context_synchronously
+      aspectRatio: MediaQuery.of(context).size.width /
+          // ignore: use_build_context_synchronously
+          MediaQuery.of(context).size.height,
+      // ... other properties remain the same
+      // Adjust the aspect ratio as needed
+      autoInitialize: true,
+      autoPlay: true,
+      looping: false,
+      allowPlaybackSpeedChanging: false,
+      showControlsOnInitialize: false,
+      allowFullScreen: true,
+      showControls: false,
+      showOptions: false,
+    );
+  }
+
+  Future<void> _loadImages() async {
+    final precacheTasks = <Future>[];
+    for (var i = 1; i <= 6; i++) {
+      precacheTasks.add(
+        precacheImage(
+          AssetImage('assets/tree_of_life/${treeStates[i]}.png'),
+          context,
+        ),
+      );
+    }
+    await Future.wait(precacheTasks);
   }
 
   @override
@@ -154,29 +226,24 @@ class _TreeHomeState extends State<TreeHome> with TickerProviderStateMixin {
       body: Stack(
         children: [
           // Background image (tree)
-          if (_state == 0)
-            // Show the initial image when _state is 0.
-            Image.asset(
-              'assets/tree_of_life/beginScreen.png',
-              fit: BoxFit.cover,
-              width: double.infinity,
-              height: MediaQuery.of(context).size.height,
-            )
-          else
-            // Show the Lottie animation when _state is not 0.
-            Lottie.asset(
-              'assets/tree_of_life/${treeStates[_state]}',
-              fit: BoxFit.cover,
-              width: double.infinity,
-              height: MediaQuery.of(context).size.height,
-              controller: _controller,
-              onLoaded: (composition) {
-                // Configure the AnimationController with the duration of the
-                // Lottie file and start the animation.
-                _controller
-                  ..duration = composition.duration
-                  ..forward();
-              },
+          AspectRatio(
+            aspectRatio: MediaQuery.of(context).size.width /
+                MediaQuery.of(context).size.height,
+            child: Image.asset(
+              'assets/tree_of_life/${treeStates[_state]}.png',
+              fit: BoxFit.fill,
+            ),
+          ),
+          // Show the video player when _state is not 0.
+          if (_state != 0)
+            AbsorbPointer(
+              absorbing: true,
+              child: FittedBox(
+                fit: BoxFit.cover,
+                child: Chewie(
+                  controller: _chewieController,
+                ),
+              ),
             ),
           Positioned(
             top: 20,
@@ -234,10 +301,11 @@ class _TreeHomeState extends State<TreeHome> with TickerProviderStateMixin {
               iconSize: 55,
               onPressed: () {
                 _goToPreviousQuestion();
-                if (questionsList != null &&
-                    currentTreePartIndex <
-                        questionsList![currentQuestionIndex].treePartId) {
-                  _updateTreeState("Backward");
+                if (questionsList != null && questionsList!.isNotEmpty) {
+                  if (currentTreePartIndex <
+                      questionsList![currentQuestionIndex].treePartId) {
+                    _updateTreeState("Backward");
+                  }
                 }
               },
             ),
@@ -256,13 +324,15 @@ class _TreeHomeState extends State<TreeHome> with TickerProviderStateMixin {
                 backgroundColor: const Color(0xFF3855a2),
               ),
               onPressed: () {
-                setState(() {
-                  if (!isInputVisible) {
-                    isInputVisible = true;
-                  } else {
-                    isInputVisible = false;
-                  }
-                });
+                if (questionsList!.isNotEmpty) {
+                  setState(() {
+                    if (!isInputVisible) {
+                      isInputVisible = true;
+                    } else {
+                      isInputVisible = false;
+                    }
+                  });
+                }
               },
               child: const Text(
                 'Antwoorden',
@@ -287,10 +357,11 @@ class _TreeHomeState extends State<TreeHome> with TickerProviderStateMixin {
               iconSize: 55,
               onPressed: () {
                 _goToNextQuestion();
-                if (questionsList != null &&
-                    currentTreePartIndex <
-                        questionsList![currentQuestionIndex].treePartId) {
-                  _updateTreeState("Forward");
+                if (questionsList != null && questionsList!.isNotEmpty) {
+                  if (currentTreePartIndex <
+                      questionsList![currentQuestionIndex].treePartId) {
+                    _updateTreeState("Forward");
+                  }
                 }
               },
             ),
@@ -300,6 +371,8 @@ class _TreeHomeState extends State<TreeHome> with TickerProviderStateMixin {
     );
   }
 }
+
+// ... (rest of the code remains unchanged)
 
 class ChatBubble extends StatelessWidget {
   final String message;
