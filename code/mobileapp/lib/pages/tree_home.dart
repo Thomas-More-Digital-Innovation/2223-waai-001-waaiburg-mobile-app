@@ -24,6 +24,7 @@ class _TreeHomeState extends State<TreeHome> with TickerProviderStateMixin {
   int currentTreePartIndex = 0;
   bool isInputVisible = false;
   Answer? answer;
+  bool treeStateChanged = false;
 
   int _state = 0;
 
@@ -75,27 +76,9 @@ class _TreeHomeState extends State<TreeHome> with TickerProviderStateMixin {
     // set the answer to the answer of the current question
     setState((() => answer = _getAnswerValue(currentQuestionIndex)));
 
-    // Initialize the video player controller with the asset
+    //init videoplayer for the animation
     _videoPlayerController = VideoPlayerController.asset("");
-
-    // Initialize the Chewie controller
-    _chewieController = ChewieController(
-      videoPlayerController: _videoPlayerController,
-      // ignore: use_build_context_synchronously
-      aspectRatio: MediaQuery.of(context).size.width /
-          // ignore: use_build_context_synchronously
-          MediaQuery.of(context).size.height,
-      // ... other properties remain the same
-      // Adjust the aspect ratio as needed
-      autoInitialize: true,
-      autoPlay: true,
-      looping: false,
-      allowPlaybackSpeedChanging: false,
-      showControlsOnInitialize: false,
-      allowFullScreen: true,
-      showControls: false,
-      showOptions: false,
-    );
+    _initializeChewieController();
   }
 
   void _goToPreviousQuestion() {
@@ -142,13 +125,14 @@ class _TreeHomeState extends State<TreeHome> with TickerProviderStateMixin {
   }
 
   final treeStates = const {
-    0: 'zaadje',
+    0: 'begin',
     1: 'zaadje',
     2: 'stam',
     3: 'takken',
     4: 'bladeren',
     5: 'appels',
-    6: 'vogels'
+    6: 'vogels',
+    7: 'last'
   };
 
   void _updateTreeState(String direction) async {
@@ -181,21 +165,32 @@ class _TreeHomeState extends State<TreeHome> with TickerProviderStateMixin {
       currentTreePartIndex = questionsList![currentQuestionIndex].treePartId;
     });
 
-    // Update the video controller with the new video asset
-    _videoPlayerController = VideoPlayerController.asset(
-        'assets/tree_of_life/${treeStates[_state]}.mov');
+    try {
+      await _loadVideo();
+    } catch (e) {
+      print("Error loading video: $e");
+    }
+    _initializeChewieController();
+  }
 
-    // Dispose of the previous Chewie controller and create a new one
-    _chewieController.dispose();
+  Future<void> _loadVideo() async {
+    try {
+      _videoPlayerController = VideoPlayerController.asset(
+        'assets/tree_of_life/${treeStates[_state]}.mp4',
+      );
 
+      await _videoPlayerController.initialize();
+    } catch (error) {
+      print('Error initializing video player: $error');
+      // Handle the error as needed
+    }
+  }
+
+  void _initializeChewieController() {
     _chewieController = ChewieController(
       videoPlayerController: _videoPlayerController,
-      // ignore: use_build_context_synchronously
       aspectRatio: MediaQuery.of(context).size.width /
-          // ignore: use_build_context_synchronously
           MediaQuery.of(context).size.height,
-      // ... other properties remain the same
-      // Adjust the aspect ratio as needed
       autoInitialize: true,
       autoPlay: true,
       looping: false,
@@ -220,6 +215,41 @@ class _TreeHomeState extends State<TreeHome> with TickerProviderStateMixin {
     await Future.wait(precacheTasks);
   }
 
+  Widget buildChewieWidget() {
+    setState(() {
+      treeStateChanged = false;
+    });
+    return FutureBuilder<void>(
+      future: _loadVideo(),
+      builder: (context, snapshot) {
+        if (snapshot.connectionState == ConnectionState.done) {
+          return AbsorbPointer(
+            absorbing: true,
+            child: FittedBox(
+              fit: BoxFit.cover,
+              child: Chewie(
+                controller: _chewieController,
+              ),
+            ),
+          );
+        } else if (snapshot.hasError) {
+          print("Error loading video: ${snapshot.error}");
+          return AspectRatio(
+            aspectRatio: MediaQuery.of(context).size.width /
+                MediaQuery.of(context).size.height,
+            child: Image.asset(
+              'assets/tree_of_life/${treeStates[_state]}.png',
+              fit: BoxFit.fill,
+            ),
+          );
+        } else {
+          // Loading state, you can return a loading indicator if needed
+          return const Center(child: CircularProgressIndicator());
+        }
+      },
+    );
+  }
+
   @override
   Widget build(BuildContext context) {
     return Scaffold(
@@ -230,21 +260,22 @@ class _TreeHomeState extends State<TreeHome> with TickerProviderStateMixin {
             aspectRatio: MediaQuery.of(context).size.width /
                 MediaQuery.of(context).size.height,
             child: Image.asset(
-              'assets/tree_of_life/${treeStates[_state]}.png',
+              'assets/tree_of_life/${_state > 0 ? treeStates[_state - 1] : treeStates[_state]}.png',
               fit: BoxFit.fill,
             ),
           ),
           // Show the video player when _state is not 0.
           if (_state != 0)
-            AbsorbPointer(
-              absorbing: true,
-              child: FittedBox(
-                fit: BoxFit.cover,
-                child: Chewie(
-                  controller: _chewieController,
-                ),
-              ),
-            ),
+            treeStateChanged
+                ? buildChewieWidget()
+                : AspectRatio(
+                    aspectRatio: MediaQuery.of(context).size.width /
+                        MediaQuery.of(context).size.height,
+                    child: Image.asset(
+                      'assets/tree_of_life/${treeStates[_state]}.png',
+                      fit: BoxFit.fill,
+                    ),
+                  ),
           Positioned(
             top: 20,
             left: 10,
@@ -304,6 +335,9 @@ class _TreeHomeState extends State<TreeHome> with TickerProviderStateMixin {
                 if (questionsList != null && questionsList!.isNotEmpty) {
                   if (currentTreePartIndex <
                       questionsList![currentQuestionIndex].treePartId) {
+                    setState(() {
+                      treeStateChanged = true;
+                    });
                     _updateTreeState("Backward");
                   }
                 }
@@ -360,6 +394,9 @@ class _TreeHomeState extends State<TreeHome> with TickerProviderStateMixin {
                 if (questionsList != null && questionsList!.isNotEmpty) {
                   if (currentTreePartIndex <
                       questionsList![currentQuestionIndex].treePartId) {
+                    setState(() {
+                      treeStateChanged = true;
+                    });
                     _updateTreeState("Forward");
                   }
                 }
