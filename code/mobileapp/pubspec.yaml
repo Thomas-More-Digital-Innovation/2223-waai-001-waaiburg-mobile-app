@@ -45,6 +45,9 @@ dependencies:
   flutter_layout_grid: 1.0.6
   shared_preferences: ^2.0.9
   lottie: ^2.7.0
+  chewie: ^1.5.0
+  video_player: ^2.8.1
+  
 
 dev_dependencies:
   flutter_test:
