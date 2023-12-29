@@ -7,6 +7,7 @@ import 'package:shared_preferences/shared_preferences.dart';
 import 'package:http/http.dart' as http;
 import 'package:chewie/chewie.dart';
 import 'package:video_player/video_player.dart';
+import 'package:flutter_keyboard_visibility/flutter_keyboard_visibility.dart';
 
 class TreeHome extends StatefulWidget {
   const TreeHome({Key? key}) : super(key: key);
@@ -25,6 +26,9 @@ class _TreeHomeState extends State<TreeHome> with TickerProviderStateMixin {
   bool isInputVisible = false;
   Answer? answer;
   bool treeStateChanged = false;
+  final GlobalKey _speechBubbleKey = GlobalKey();
+  double _answerTopPosition = 0;
+  bool isKeyboardVisible = false;
 
   int _state = 0;
 
@@ -57,6 +61,11 @@ class _TreeHomeState extends State<TreeHome> with TickerProviderStateMixin {
     // Find the index of the first unanswered question
     int indexOfFirstUnansweredQuestion = questionsList!.indexWhere((question) =>
         answersList!.every((answer) => answer.questionId != question.id));
+
+    //go to the last filled in question because nicer user experience
+    if (indexOfFirstUnansweredQuestion > 0) {
+      indexOfFirstUnansweredQuestion -= 1;
+    }
 
     // Set currentQuestionIndex to the found index, or 0 if no unanswered questions are found
     setState(() {
@@ -250,160 +259,210 @@ class _TreeHomeState extends State<TreeHome> with TickerProviderStateMixin {
     );
   }
 
+  double _calculateAnswerTopPosition() {
+    if (questionsList != null && questionsList!.isNotEmpty) {
+      WidgetsBinding.instance!.addPostFrameCallback((_) {
+        // Get the RenderBox for the speech bubble widget using the GlobalKey
+        final RenderBox renderBox =
+            _speechBubbleKey.currentContext!.findRenderObject() as RenderBox;
+
+        // Calculate the top position by adding the height of the speech bubble
+        setState(() {
+          _answerTopPosition = renderBox.size.height + 120;
+        });
+      });
+
+      // Return the last calculated top position
+      return _answerTopPosition;
+    }
+    return 0; // Default top position if questionsList is null or empty
+  }
+
   @override
   Widget build(BuildContext context) {
-    return Scaffold(
-      body: Stack(
-        children: [
-          // Background image (tree)
-          AspectRatio(
-            aspectRatio: MediaQuery.of(context).size.width /
-                MediaQuery.of(context).size.height,
-            child: Image.asset(
-              'assets/tree_of_life/${_state > 0 ? treeStates[_state - 1] : treeStates[_state]}.png',
-              fit: BoxFit.fill,
-            ),
-          ),
-          // Show the video player when _state is not 0.
-          if (_state != 0)
-            treeStateChanged
-                ? buildChewieWidget()
-                : AspectRatio(
-                    aspectRatio: MediaQuery.of(context).size.width /
-                        MediaQuery.of(context).size.height,
-                    child: Image.asset(
-                      'assets/tree_of_life/${treeStates[_state]}.png',
-                      fit: BoxFit.fill,
-                    ),
-                  ),
-          Positioned(
-            top: 20,
-            left: 10,
-            child: IconButton(
-              icon: const Icon(
-                Icons.home_rounded,
-                color: Color(0xFF3855a2),
-                weight: 0.9,
-              ),
-              iconSize: 55,
-              onPressed: () => Navigator.of(context).pop(),
-            ),
-          ),
-          // Speech Bubble
-          Positioned(
-            top: 100,
-            left: 50,
-            child: questionsList == null
-                ? const CircularProgressIndicator()
-                : questionsList!.isEmpty
-                    ? const Text("No questions available")
-                    : ChatBubble(
-                        message: questionsList![currentQuestionIndex].content,
-                        horizontalPadding: 40,
-                        verticalPadding: 20,
-                        backgroundColor: Colors.white,
-                        textColor: Colors.black,
-                      ),
-          ),
-          // Input bubble
-          if (isInputVisible)
-            Positioned(
-              bottom: 80, // Adjust the position as needed
-              left: MediaQuery.of(context).size.width / 2 - 150,
-              child: InputBubble(
-                answer: answer,
-                questionId: questionsList![currentQuestionIndex].id,
-                reloadData: reloadAllData,
-              ),
-            ),
-          // Pijltje Links
-          Positioned(
-            bottom: -10,
-            left: 10,
-            child: IconButton(
-              icon: Transform.rotate(
-                angle: 45,
-                child: const Icon(
-                  Icons.play_arrow_rounded,
-                  color: Color(0xFF3855a2),
-                  weight: 0.9,
+    return KeyboardDismissOnTap(
+      dismissOnCapturedTaps: true,
+      child: Scaffold(
+        resizeToAvoidBottomInset: true,
+        body: SingleChildScrollView(
+          child: Stack(
+            children: [
+              // Background image (tree)
+              AspectRatio(
+                aspectRatio: MediaQuery.of(context).size.width /
+                    MediaQuery.of(context).size.height,
+                child: Image.asset(
+                  'assets/tree_of_life/${_state > 0 ? treeStates[_state - 1] : treeStates[_state]}.png',
+                  fit: BoxFit.fill,
                 ),
               ),
-              iconSize: 55,
-              onPressed: () {
-                _goToPreviousQuestion();
-                if (questionsList != null && questionsList!.isNotEmpty) {
-                  if (currentTreePartIndex <
-                      questionsList![currentQuestionIndex].treePartId) {
-                    setState(() {
-                      treeStateChanged = true;
-                    });
-                    _updateTreeState("Backward");
-                  }
-                }
-              },
-            ),
-          ),
-          const SizedBox(
-            width: 5,
-          ),
-          // Antwoord
-          Positioned(
-            bottom: 0,
-            left: MediaQuery.of(context).size.width / 2 -
-                50, // Center Horizontally
-            right: null,
-            child: TextButton(
-              style: TextButton.styleFrom(
-                backgroundColor: const Color(0xFF3855a2),
+              // Show the video player when _state is not 0.
+              if (_state != 0)
+                treeStateChanged
+                    ? buildChewieWidget()
+                    : AspectRatio(
+                        aspectRatio: MediaQuery.of(context).size.width /
+                            MediaQuery.of(context).size.height,
+                        child: Image.asset(
+                          'assets/tree_of_life/${treeStates[_state]}.png',
+                          fit: BoxFit.fill,
+                        ),
+                      ),
+              Positioned(
+                top: 20,
+                left: 10,
+                child: IconButton(
+                  icon: const Icon(
+                    Icons.home_rounded,
+                    color: Color(0xFF3855a2),
+                    weight: 0.9,
+                  ),
+                  iconSize: 55,
+                  onPressed: () => Navigator.of(context).pop(),
+                ),
               ),
-              onPressed: () {
-                if (questionsList!.isNotEmpty) {
-                  setState(() {
-                    if (!isInputVisible) {
-                      isInputVisible = true;
-                    } else {
-                      isInputVisible = false;
+              // Speech Bubble
+              Positioned(
+                key: _speechBubbleKey,
+                top: 100,
+                left: 30,
+                child: questionsList == null
+                    ? const CircularProgressIndicator()
+                    : questionsList!.isEmpty
+                        ? const Text("Geen actieve vragenlijst gevonden!")
+                        : ChatBubble(
+                            message:
+                                questionsList![currentQuestionIndex].content,
+                            horizontalPadding: 40,
+                            verticalPadding: 20,
+                            backgroundColor: Colors.white,
+                            textColor: Colors.black,
+                          ),
+              ),
+              if (answer != null)
+                // Answer Bubble
+                if (questionsList != null && questionsList!.isNotEmpty)
+                  Positioned(
+                    top: _calculateAnswerTopPosition(),
+                    right: 30,
+                    child: ChatBubble(
+                      message: answer!.answer,
+                      horizontalPadding: 40,
+                      verticalPadding: 20,
+                      backgroundColor: Colors.white,
+                      textColor: Colors.black,
+                    ),
+                  ),
+              // Input bubble
+              if (isInputVisible)
+                Positioned(
+                  bottom: isKeyboardVisible
+                      ? 350
+                      : 90, // Adjust the position as needed
+                  left: MediaQuery.of(context).size.width / 2 - 150,
+                  child: InputBubble(
+                    answer: answer,
+                    questionId: questionsList![currentQuestionIndex].id,
+                    reloadData: reloadAllData,
+                    updateKeyboardVisibility: (bool isVisible) {
+                      setState(() {
+                        isKeyboardVisible = isVisible;
+                      });
+                    },
+                  ),
+                ),
+
+              // Pijltje Links
+              Positioned(
+                bottom: 20,
+                left: 10,
+                child: IconButton(
+                  icon: Transform.rotate(
+                    angle: 45,
+                    child: const Icon(
+                      Icons.play_arrow_rounded,
+                      color: Color(0xFF3855a2),
+                      weight: 0.9,
+                    ),
+                  ),
+                  iconSize: 55,
+                  onPressed: () {
+                    _goToPreviousQuestion();
+                    if (questionsList != null && questionsList!.isNotEmpty) {
+                      if (currentTreePartIndex <
+                          questionsList![currentQuestionIndex].treePartId) {
+                        setState(() {
+                          treeStateChanged = true;
+                        });
+                        _updateTreeState("Backward");
+                      }
                     }
-                  });
-                }
-              },
-              child: const Text(
-                'Antwoorden',
-                style:
-                    TextStyle(color: Colors.white, fontWeight: FontWeight.bold),
+                  },
+                ),
               ),
-            ),
-          ),
-          const SizedBox(
-            width: 5,
-          ),
-          // Pijltje Rechts
-          Positioned(
-            bottom: -10, // Adjust the position as needed
-            right: 10, // Adjust the position as needed
-            child: IconButton(
-              icon: const Icon(
-                Icons.play_arrow_rounded,
-                color: Color(0xFF3855a2),
-                weight: 0.9,
+              const SizedBox(
+                width: 5,
               ),
-              iconSize: 55,
-              onPressed: () {
-                _goToNextQuestion();
-                if (questionsList != null && questionsList!.isNotEmpty) {
-                  if (currentTreePartIndex <
-                      questionsList![currentQuestionIndex].treePartId) {
-                    setState(() {
-                      treeStateChanged = true;
-                    });
-                    _updateTreeState("Forward");
-                  }
-                }
-              },
-            ),
+              // Antwoord
+              Positioned(
+                bottom: 30,
+                left: MediaQuery.of(context).size.width / 2 -
+                    50, // Center Horizontally
+                right: null,
+                child: TextButton(
+                  style: TextButton.styleFrom(
+                    backgroundColor: const Color(0xFF3855a2),
+                  ),
+                  onPressed: () {
+                    if (questionsList!.isNotEmpty) {
+                      setState(() {
+                        if (!isInputVisible) {
+                          isInputVisible = true;
+                        } else {
+                          isInputVisible = false;
+                        }
+                      });
+                    }
+                  },
+                  child: const Text(
+                    'Antwoorden',
+                    style: TextStyle(
+                        color: Colors.white, fontWeight: FontWeight.bold),
+                  ),
+                ),
+              ),
+              const SizedBox(
+                width: 5,
+              ),
+              // Pijltje Rechts
+              if (answer != null)
+                Positioned(
+                  bottom: 20, // Adjust the position as needed
+                  right: 10, // Adjust the position as needed
+                  child: IconButton(
+                    icon: const Icon(
+                      Icons.play_arrow_rounded,
+                      color: Color(0xFF3855a2),
+                      weight: 0.9,
+                    ),
+                    iconSize: 55,
+                    onPressed: () {
+                      _goToNextQuestion();
+                      if (questionsList != null && questionsList!.isNotEmpty) {
+                        if (currentTreePartIndex <
+                            questionsList![currentQuestionIndex].treePartId) {
+                          setState(() {
+                            treeStateChanged = true;
+                          });
+                          _updateTreeState("Forward");
+                        }
+                      }
+                    },
+                  ),
+                ),
+            ],
           ),
-        ],
+        ),
       ),
     );
   }
@@ -461,12 +520,15 @@ class InputBubble extends StatefulWidget {
   late Answer? answer;
   final int questionId;
   final Function reloadData;
-  InputBubble(
-      {Key? key,
-      this.answer,
-      required this.questionId,
-      required this.reloadData})
-      : super(key: key);
+  final Function(bool) updateKeyboardVisibility;
+
+  InputBubble({
+    Key? key,
+    this.answer,
+    required this.questionId,
+    required this.reloadData,
+    required this.updateKeyboardVisibility,
+  }) : super(key: key);
 
   @override
   _InputBubbleState createState() => _InputBubbleState();
@@ -474,13 +536,26 @@ class InputBubble extends StatefulWidget {
 
 class _InputBubbleState extends State<InputBubble> {
   final TextEditingController _textController = TextEditingController();
+  late final FocusNode _focusNode = FocusNode();
 
   @override
   void initState() {
     super.initState();
+    _focusNode.addListener(_onFocusChange);
     if (widget.answer != null) {
       _textController.text = widget.answer!.answer;
     }
+  }
+
+  @override
+  void dispose() {
+    _focusNode.removeListener(_onFocusChange);
+    _focusNode.dispose();
+    super.dispose();
+  }
+
+  void _onFocusChange() {
+    widget.updateKeyboardVisibility(_focusNode.hasFocus);
   }
 
   Future<void> _sendAnswer(String newAnswer) async {
@@ -560,6 +635,7 @@ class _InputBubbleState extends State<InputBubble> {
                 children: [
                   Expanded(
                     child: TextField(
+                      focusNode: _focusNode,
                       controller: _textController,
                       decoration: const InputDecoration.collapsed(
                         hintText: 'Typ je antwoord...',
