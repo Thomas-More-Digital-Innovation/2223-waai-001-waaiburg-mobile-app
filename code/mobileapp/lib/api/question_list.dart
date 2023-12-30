@@ -7,6 +7,7 @@ Future<List<dynamic>> fetchQuestionList() async {
   const String apiUrl = 'https://dewaaiburgapp.eu/api/activeList'; // API URL
   SharedPreferences prefs = await SharedPreferences.getInstance();
   final token = prefs.get('userToken');
+  final userId = prefs.get('userId');
 
   try {
     final response = await http
@@ -21,8 +22,10 @@ Future<List<dynamic>> fetchQuestionList() async {
       List<Question> questionsList =
           questions.map((model) => Question.fromJson(model)).toList();
 
-      List<Answer> answersList =
-          answers.map((model) => Answer.fromJson(model)).toList();
+      List<Answer> answersList = answers
+          .map((model) => Answer.fromJson(model))
+          .where((answer) => answer.userId == userId)
+          .toList();
 
       return Future.value([questionsList, answersList]);
     } else {

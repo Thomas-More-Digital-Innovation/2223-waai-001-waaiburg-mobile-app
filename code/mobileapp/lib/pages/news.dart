@@ -58,7 +58,7 @@ class _NewsState extends State<News> {
             }
             // show a loading spinner
             else {
-              return const CircularProgressIndicator();
+              return const Center(child: CircularProgressIndicator());
             }
           },
         ),
@@ -84,7 +84,7 @@ class _NewsState extends State<News> {
             }
             // show a loading spinnersnapshot.data!.where((i) => i.sectionId == 1).toList());
             else {
-              return const CircularProgressIndicator();
+              return const Center(child: CircularProgressIndicator());
             }
           },
         ),
