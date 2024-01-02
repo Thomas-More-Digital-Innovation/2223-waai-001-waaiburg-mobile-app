@@ -1,5 +1,4 @@
 import 'package:flutter/material.dart';
-import 'package:flutter_keyboard_visibility/flutter_keyboard_visibility.dart';
 import 'package:mobileapp/pages/home.dart';
 import 'package:mobileapp/pages/login_page.dart';
 import 'package:mobileapp/pages/info_content_select.dart';
@@ -7,6 +6,7 @@ import 'package:mobileapp/pages/info_segments.dart';
 import 'package:mobileapp/pages/info_contents.dart';
 import 'package:mobileapp/pages/news.dart';
 import 'package:mobileapp/pages/tree_home.dart';
+import 'package:mobileapp/pages/user_details.dart';
 
 /// The website screen
 /// This screen is a webview
@@ -23,6 +23,7 @@ void main() {
       '/home': (context) => const Home(),
       '/news': (context) => const News(),
       '/treehome': (context) => const TreeHome(),
+      '/userdetails': (context) => const UserDetails(),
     },
   ));
 }
