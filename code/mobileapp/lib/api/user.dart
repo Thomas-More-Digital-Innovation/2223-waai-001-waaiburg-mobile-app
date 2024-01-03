@@ -21,7 +21,6 @@ Future<List<dynamic>> fetchUserDetails() async {
       User? mentor = jsonResponse['mentor'].isNotEmpty
           ? User.fromJson(jsonResponse['mentor'])
           : null;
-
       return [user, mentor];
     } else {
       print("Request failed with status: ${response.statusCode}");
@@ -39,7 +38,7 @@ class User {
   final String firstname;
   final String surname;
   final String? birthdate;
-  final String? email;
+  final String email;
   final String? emailVerifiedAt;
   final String? phoneNumber;
   final String? gender;
@@ -56,8 +55,8 @@ class User {
     required this.userTypeId,
     required this.firstname,
     required this.surname,
+    required this.email,
     this.birthdate,
-    this.email,
     this.emailVerifiedAt,
     this.phoneNumber,
     this.gender,

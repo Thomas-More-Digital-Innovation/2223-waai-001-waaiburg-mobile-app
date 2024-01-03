@@ -121,7 +121,7 @@ class _HomeState extends State<Home> {
                             ],
                             if (userLoggedIn) ...[
                               const HomeButton(
-                                name: "Gebruiker",
+                                name: "GEGEVENS",
                                 icon: FontAwesomeIcons.user,
                                 iconColor: Color(0xFF3855a2),
                                 sectionId: 1,
