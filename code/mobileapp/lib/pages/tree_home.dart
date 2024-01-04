@@ -261,7 +261,7 @@ class _TreeHomeState extends State<TreeHome> with TickerProviderStateMixin {
 
   double _calculateAnswerTopPosition() {
     if (questionsList != null && questionsList!.isNotEmpty) {
-      WidgetsBinding.instance!.addPostFrameCallback((_) {
+      WidgetsBinding.instance.addPostFrameCallback((_) {
         // Get the RenderBox for the speech bubble widget using the GlobalKey
         final RenderBox renderBox =
             _speechBubbleKey.currentContext!.findRenderObject() as RenderBox;
