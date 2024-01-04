@@ -29,6 +29,7 @@ class _TreeHomeState extends State<TreeHome> with TickerProviderStateMixin {
   final GlobalKey _speechBubbleKey = GlobalKey();
   double _answerTopPosition = 0;
   bool isKeyboardVisible = false;
+  bool allQuestionsFilledIn = false;
 
   int _state = 0;
 
@@ -71,7 +72,7 @@ class _TreeHomeState extends State<TreeHome> with TickerProviderStateMixin {
     setState(() {
       currentQuestionIndex = indexOfFirstUnansweredQuestion >= 0
           ? indexOfFirstUnansweredQuestion
-          : 0;
+          : questionsList!.length - 1;
     });
 
     // set the current tree part index to the found index, or 0 if no unanswered questions are found
@@ -84,19 +85,21 @@ class _TreeHomeState extends State<TreeHome> with TickerProviderStateMixin {
     });
     // set the answer to the answer of the current question
     setState((() => answer = _getAnswerValue(currentQuestionIndex)));
-
-    //init videoplayer for the animation
-    _videoPlayerController = VideoPlayerController.asset("");
-    _initializeChewieController();
   }
 
   void _goToPreviousQuestion() {
     if (currentQuestionIndex > 0) {
-      setState(() {
-        currentQuestionIndex--;
-        isInputVisible = false;
-        answer = _getAnswerValue(currentQuestionIndex);
-      });
+      if (!allQuestionsFilledIn) {
+        setState(() {
+          currentQuestionIndex--;
+          isInputVisible = false;
+          answer = _getAnswerValue(currentQuestionIndex);
+        });
+      } else {
+        setState(() {
+          allQuestionsFilledIn = false;
+        });
+      }
     }
   }
 
@@ -107,6 +110,10 @@ class _TreeHomeState extends State<TreeHome> with TickerProviderStateMixin {
         currentQuestionIndex++;
         isInputVisible = false;
         answer = _getAnswerValue(currentQuestionIndex);
+      });
+    } else if (currentQuestionIndex == questionsList!.length - 1) {
+      setState(() {
+        allQuestionsFilledIn = true;
       });
     }
   }
@@ -161,25 +168,27 @@ class _TreeHomeState extends State<TreeHome> with TickerProviderStateMixin {
       }
     });
 
-    // Load the images asynchronously
-    await _loadImages().then((_) {
-      completer.complete();
-    });
+    if (treeStateChanged) {
+      // Load the images asynchronously
+      await _loadImages().then((_) {
+        completer.complete();
+      });
 
-    // Wait until the images are fully loaded before updating the video controller
-    await completer.future;
+      // Wait until the images are fully loaded before updating the video controller
+      await completer.future;
 
-    // Update the current tree part index
-    setState(() {
-      currentTreePartIndex = questionsList![currentQuestionIndex].treePartId;
-    });
+      // Update the current tree part index
+      setState(() {
+        currentTreePartIndex = questionsList![currentQuestionIndex].treePartId;
+      });
 
-    try {
-      await _loadVideo();
-    } catch (e) {
-      print("Error loading video: $e");
+      try {
+        await _loadVideo();
+      } catch (e) {
+        print("Error loading video: $e");
+      }
+      _initializeChewieController();
     }
-    _initializeChewieController();
   }
 
   Future<void> _loadVideo() async {
@@ -297,17 +306,17 @@ class _TreeHomeState extends State<TreeHome> with TickerProviderStateMixin {
                 ),
               ),
               // Show the video player when _state is not 0.
-              if (_state != 0)
-                treeStateChanged
-                    ? buildChewieWidget()
-                    : AspectRatio(
-                        aspectRatio: MediaQuery.of(context).size.width /
-                            MediaQuery.of(context).size.height,
-                        child: Image.asset(
-                          'assets/tree_of_life/${treeStates[_state]}.png',
-                          fit: BoxFit.fill,
-                        ),
+
+              treeStateChanged
+                  ? buildChewieWidget()
+                  : AspectRatio(
+                      aspectRatio: MediaQuery.of(context).size.width /
+                          MediaQuery.of(context).size.height,
+                      child: Image.asset(
+                        'assets/tree_of_life/${treeStates[_state]}.png',
+                        fit: BoxFit.fill,
                       ),
+                    ),
               Positioned(
                 top: 20,
                 left: 10,
@@ -321,38 +330,82 @@ class _TreeHomeState extends State<TreeHome> with TickerProviderStateMixin {
                   onPressed: () => Navigator.of(context).pop(),
                 ),
               ),
-              // Speech Bubble
-              Positioned(
-                key: _speechBubbleKey,
-                top: 100,
-                left: 30,
-                child: questionsList == null
-                    ? const CircularProgressIndicator()
-                    : questionsList!.isEmpty
-                        ? const Text("Geen actieve vragenlijst gevonden!")
-                        : ChatBubble(
-                            message:
-                                questionsList![currentQuestionIndex].content,
-                            horizontalPadding: 40,
-                            verticalPadding: 20,
-                            backgroundColor: Colors.white,
-                            textColor: Colors.black,
-                          ),
-              ),
-              if (answer != null)
-                // Answer Bubble
-                if (questionsList != null && questionsList!.isNotEmpty)
-                  Positioned(
-                    top: _calculateAnswerTopPosition(),
-                    right: 30,
-                    child: ChatBubble(
-                      message: answer!.answer,
-                      horizontalPadding: 40,
-                      verticalPadding: 20,
-                      backgroundColor: Colors.white,
-                      textColor: Colors.black,
+              if (allQuestionsFilledIn)
+                const Column(
+                  children: [
+                    SizedBox(height: 75),
+                    Row(
+                      mainAxisAlignment: MainAxisAlignment.center,
+                      children: [
+                        Column(
+                          children: [
+                            Text(
+                              "Proficiat!",
+                              style: TextStyle(
+                                fontSize: 24,
+                                fontWeight: FontWeight.bold,
+                                color: Color(0xFF3855a2),
+                              ),
+                            ),
+                            SizedBox(height: 7),
+                            Text(
+                              "Je hebt alle vragen ingevuld,\nje boom is nu volgroeid.",
+                              style: TextStyle(
+                                fontSize: 16,
+                                color: Color(0xFF3855a2),
+                              ),
+                              textAlign: TextAlign.center,
+                            ),
+                            SizedBox(height: 4),
+                            Text(
+                              "Scroll gerust terug om te kijken wat je \n antwoorden waren tijdens de groei van je boom",
+                              style: TextStyle(
+                                fontSize: 12,
+                                color: Colors.black,
+                              ),
+                              textAlign: TextAlign.center,
+                            ),
+                          ],
+                        ),
+                      ],
                     ),
-                  ),
+                  ],
+                ),
+
+              // Speech Bubble
+              if (!allQuestionsFilledIn)
+                Positioned(
+                  key: _speechBubbleKey,
+                  top: 100,
+                  left: 30,
+                  child: questionsList == null
+                      ? const CircularProgressIndicator()
+                      : questionsList!.isEmpty
+                          ? const Text("Geen actieve vragenlijst gevonden!")
+                          : ChatBubble(
+                              message:
+                                  questionsList![currentQuestionIndex].content,
+                              horizontalPadding: 40,
+                              verticalPadding: 20,
+                              backgroundColor: Colors.white,
+                              textColor: Colors.black,
+                            ),
+                ),
+              if (!allQuestionsFilledIn)
+                if (answer != null)
+                  // Answer Bubble
+                  if (questionsList != null && questionsList!.isNotEmpty)
+                    Positioned(
+                      top: _calculateAnswerTopPosition(),
+                      right: 30,
+                      child: ChatBubble(
+                        message: answer!.answer,
+                        horizontalPadding: 40,
+                        verticalPadding: 20,
+                        backgroundColor: Colors.white,
+                        textColor: Colors.black,
+                      ),
+                    ),
               // Input bubble
               if (isInputVisible)
                 Positioned(
@@ -403,63 +456,66 @@ class _TreeHomeState extends State<TreeHome> with TickerProviderStateMixin {
               const SizedBox(
                 width: 5,
               ),
-              // Antwoord
-              Positioned(
-                bottom: 30,
-                left: MediaQuery.of(context).size.width / 2 -
-                    50, // Center Horizontally
-                right: null,
-                child: TextButton(
-                  style: TextButton.styleFrom(
-                    backgroundColor: const Color(0xFF3855a2),
-                  ),
-                  onPressed: () {
-                    if (questionsList!.isNotEmpty) {
-                      setState(() {
-                        if (!isInputVisible) {
-                          isInputVisible = true;
-                        } else {
-                          isInputVisible = false;
-                        }
-                      });
-                    }
-                  },
-                  child: const Text(
-                    'Antwoorden',
-                    style: TextStyle(
-                        color: Colors.white, fontWeight: FontWeight.bold),
+              if (!allQuestionsFilledIn)
+                // Antwoord
+                Positioned(
+                  bottom: 30,
+                  left: MediaQuery.of(context).size.width / 2 -
+                      50, // Center Horizontally
+                  right: null,
+                  child: TextButton(
+                    style: TextButton.styleFrom(
+                      backgroundColor: const Color(0xFF3855a2),
+                    ),
+                    onPressed: () {
+                      if (questionsList!.isNotEmpty) {
+                        setState(() {
+                          if (!isInputVisible) {
+                            isInputVisible = true;
+                          } else {
+                            isInputVisible = false;
+                          }
+                        });
+                      }
+                    },
+                    child: const Text(
+                      'Antwoorden',
+                      style: TextStyle(
+                          color: Colors.white, fontWeight: FontWeight.bold),
+                    ),
                   ),
                 ),
-              ),
               const SizedBox(
                 width: 5,
               ),
               // Pijltje Rechts
-              if (answer != null)
-                Positioned(
-                  bottom: 20, // Adjust the position as needed
-                  right: 10, // Adjust the position as needed
-                  child: IconButton(
-                    icon: const Icon(
-                      Icons.play_arrow_rounded,
-                      color: Color(0xFF3855a2),
-                      weight: 0.9,
-                    ),
-                    iconSize: 55,
-                    onPressed: () {
-                      _goToNextQuestion();
-                      if (questionsList != null && questionsList!.isNotEmpty) {
-                        if (currentTreePartIndex <
-                            questionsList![currentQuestionIndex].treePartId) {
-                          setState(() {
-                            treeStateChanged = true;
-                          });
-                          _updateTreeState("Forward");
+              if (!allQuestionsFilledIn)
+                if (answer != null)
+                  Positioned(
+                    bottom: 20, // Adjust the position as needed
+                    right: 10, // Adjust the position as needed
+                    child: IconButton(
+                      icon: const Icon(
+                        Icons.play_arrow_rounded,
+                        color: Color(0xFF3855a2),
+                        weight: 0.9,
+                      ),
+                      iconSize: 55,
+                      onPressed: () {
+                        _goToNextQuestion();
+                        if (questionsList != null &&
+                            questionsList!.isNotEmpty) {
+                          if (currentTreePartIndex <
+                              questionsList![currentQuestionIndex].treePartId) {
+                            setState(() {
+                              treeStateChanged = true;
+                            });
+                            _updateTreeState("Forward");
+                          }
                         }
-                      }
-                    },
+                      },
+                    ),
                   ),
-                ),
             ],
           ),
         ),
@@ -559,7 +615,7 @@ class _InputBubbleState extends State<InputBubble> {
   }
 
   Future<void> _sendAnswer(String newAnswer) async {
-    String apiUrl = 'https://dewaaiburgapp.eu/api/answer'; // API URL
+    String apiUrl = 'http://10.0.2.2:8000/api/answer'; // API URL
     SharedPreferences prefs = await SharedPreferences.getInstance();
     final token = prefs.get('userToken');
     final userId = prefs.get('userId');
