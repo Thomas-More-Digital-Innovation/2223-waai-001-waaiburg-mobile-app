@@ -331,43 +331,57 @@ class _TreeHomeState extends State<TreeHome> with TickerProviderStateMixin {
                 ),
               ),
               if (allQuestionsFilledIn)
-                const Column(
+                Column(
                   children: [
-                    SizedBox(height: 75),
-                    Row(
-                      mainAxisAlignment: MainAxisAlignment.center,
-                      children: [
-                        Column(
-                          children: [
-                            Text(
-                              "Proficiat!",
-                              style: TextStyle(
-                                fontSize: 24,
-                                fontWeight: FontWeight.bold,
-                                color: Color(0xFF3855a2),
+                    const SizedBox(height: 85),
+                    Container(
+                      decoration: BoxDecoration(
+                        color: Colors.white.withOpacity(
+                            0.6), // Set your desired background color and opacity
+                        borderRadius: BorderRadius.circular(
+                            20.0), // Adjust the radius as needed
+                      ),
+                      padding: const EdgeInsets.all(
+                          16.0), // Adjust the padding as needed
+                      margin: const EdgeInsets.symmetric(horizontal: 20.0),
+                      child: const Row(
+                        mainAxisAlignment: MainAxisAlignment.center,
+                        children: [
+                          Column(
+                            children: [
+                              Text(
+                                "Proficiat!",
+                                style: TextStyle(
+                                  fontSize: 24,
+                                  fontWeight: FontWeight.bold,
+                                  color: Color(
+                                      0xFF3855a2), // Adjust text color as needed
+                                ),
                               ),
-                            ),
-                            SizedBox(height: 7),
-                            Text(
-                              "Je hebt alle vragen ingevuld,\nje boom is nu volgroeid.",
-                              style: TextStyle(
-                                fontSize: 16,
-                                color: Color(0xFF3855a2),
+                              SizedBox(height: 7),
+                              Text(
+                                "Je hebt alle vragen ingevuld,\nje boom is nu volgroeid.",
+                                style: TextStyle(
+                                  fontSize: 16,
+                                  color: Color(
+                                      0xFF3855a2), // Adjust text color as needed
+                                ),
+                                textAlign: TextAlign.center,
                               ),
-                              textAlign: TextAlign.center,
-                            ),
-                            SizedBox(height: 4),
-                            Text(
-                              "Scroll gerust terug om te kijken wat je \n antwoorden waren tijdens de groei van je boom",
-                              style: TextStyle(
-                                fontSize: 12,
-                                color: Colors.black,
+                              SizedBox(height: 4),
+                              Text(
+                                "Scroll gerust terug om te kijken wat je \n antwoorden waren tijdens de groei van je boom",
+                                style: TextStyle(
+                                  fontSize: 12,
+                                  color: Colors
+                                      .black, // Adjust text color as needed
+                                ),
+                                textAlign: TextAlign.center,
                               ),
-                              textAlign: TextAlign.center,
-                            ),
-                          ],
-                        ),
-                      ],
+                            ],
+                          ),
+                        ],
+                      ),
                     ),
                   ],
                 ),
