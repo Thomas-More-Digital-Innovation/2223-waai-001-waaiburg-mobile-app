@@ -22,7 +22,7 @@ class _MyWidgetState extends State<LoginPage> {
   void login(String email, String password) async {
     try {
       Response response = await post(
-          Uri.parse('http://10.0.2.2:8000/api/auth/login'),
+          Uri.parse('https://dewaaiburgapp.eu/api/auth/login'),
           body: {'email': email, 'password': password});
       if (response.statusCode == 200) {
         var data = jsonDecode(response.body.toString());
