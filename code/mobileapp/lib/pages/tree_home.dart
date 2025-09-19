@@ -629,7 +629,7 @@ class _InputBubbleState extends State<InputBubble> {
   }
 
   Future<void> _sendAnswer(String newAnswer) async {
-    String apiUrl = 'http://10.0.2.2:8000/api/answer'; // API URL
+    String apiUrl = 'https://dewaaiburgapp.eu/api/answer'; // API URL
     SharedPreferences prefs = await SharedPreferences.getInstance();
     final token = prefs.get('userToken');
     final userId = prefs.get('userId');
