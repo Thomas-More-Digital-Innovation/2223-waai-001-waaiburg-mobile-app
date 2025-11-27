@@ -1,7 +1,15 @@
-# 2223-waai-001-waaiburg-mobile-app
-Mobile app for the Waaiburg project in 2022-2023
+# 2526-waai-001-waaiburg-mobile-app
 
-Install steps:
+Mobile app for the Waaiburg project in 2025-2026
+for of the Waaiburg project in 2022-2023
+
+## To be implemented
+
+1. clean up code
+2. add avatars
+
+## Install steps
+
 1. Install Flutter SDK
 2. Install flutter extension in VSCode
 3. Run flutter doctor
@@ -9,7 +17,8 @@ Install steps:
 5. Install Android SDK
 6. Install Android emulator
 
-Possible problems:
+## Possible problems
+
 1. cmdline-tools component is missing -> install it in Android Studio
 2. Some Android licenses not accepted. -> run flutter doctor --android-licenses in cmd and accept all licenses
 3. 'flutter' is not recognized as an internal or external command, operable program or batch file. -> add flutter sdk bin path to environment variables and restart vscode
