@@ -1,4 +1,4 @@
-package be.dewaaiburg.mobileapp
+package be.dewaaiburg
 
 import io.flutter.embedding.android.FlutterActivity
 
